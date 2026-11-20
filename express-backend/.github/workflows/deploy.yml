@@ -1,0 +1,40 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.0.3
+
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+
+          script: |
+            set -e
+
+            # Path to the checkout on EC2. Set the EC2_APP_DIR repo variable
+            # (Settings → Secrets and variables → Actions → Variables) so we
+            # don't have a literal placeholder in the workflow. Fallback path
+            # matches the convention used by the existing pm2 process.
+            APP_DIR="${{ vars.EC2_APP_DIR }}"
+            if [ -z "$APP_DIR" ]; then APP_DIR="/home/ubuntu/Yantra/express-backend"; fi
+
+            cd "$APP_DIR"
+
+            git fetch --all
+            git reset --hard origin/main
+
+            npm install
+            npm run build
+
+            pm2 restart yantra-backend \
+              || pm2 start dist/index.js --name yantra-backend
