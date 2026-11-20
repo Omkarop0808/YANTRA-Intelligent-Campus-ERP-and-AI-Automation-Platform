@@ -4,7 +4,9 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { fetchStudentOverview, type StudentOverview } from '../lib/studentOverview/api';
+import { useAuth } from '../lib/auth/AuthContext';
 import { ApiError } from '../lib/api';
+import { toast } from 'react-toastify';
 
 /* The Finance domain isn't modelled in the backend yet — show a realistic
  * statement derived deterministically from the student's identity so the
@@ -69,9 +71,11 @@ const buildLedger = (rollNumber?: string): FeeLine[] => {
 };
 
 export const StudentFinance: React.FC = () => {
+  const { user } = useAuth();
   const [data, setData] = useState<StudentOverview | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [paidIds, setPaidIds] = useState<Record<string, string>>({});
 
   useEffect(() => {
     (async () => {
@@ -89,12 +93,47 @@ export const StudentFinance: React.FC = () => {
     })();
   }, []);
 
-  const ledger = buildLedger(data?.identity.rollNumber);
+  const ledger = buildLedger(data?.identity.rollNumber).map(item =>
+    paidIds[item.id]
+      ? { ...item, status: 'paid' as const, paidOn: paidIds[item.id] }
+      : item
+  );
   const paid = ledger.filter(l => l.status === 'paid');
   const due = ledger.filter(l => l.status === 'due');
   const upcoming = ledger.filter(l => l.status === 'upcoming');
   const dueTotal = due.reduce((s, l) => s + l.amount, 0);
   const paidTotal = paid.reduce((s, l) => s + l.amount, 0);
+
+  const handlePayNow = (line: FeeLine) => {
+    const today = new Date().toISOString().slice(0, 10);
+    setPaidIds(prev => ({ ...prev, [line.id]: today }));
+    toast.success(`Payment of ${fmtInr(line.amount)} recorded for ${line.label}`);
+  };
+
+  const handleDownloadReceipt = (line: FeeLine) => {
+    const studentName = user?.name || 'Student';
+    const rollNo = data?.identity.rollNumber || 'N/A';
+    const content = [
+      'YANTRA ERP — OFFICIAL FEE PAYMENT RECEIPT',
+      '==========================================',
+      `Student Name : ${studentName}`,
+      `Roll Number  : ${rollNo}`,
+      `Fee Item     : ${line.label}`,
+      `Amount Paid  : ${fmtInr(line.amount)}`,
+      `Payment Date : ${line.paidOn || new Date().toISOString().slice(0, 10)}`,
+      `Receipt Ref  : YNT-${line.id.toUpperCase()}-${Date.now().toString().slice(-6)}`,
+      `Status       : PAID`,
+      '==========================================',
+    ].join('\n');
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `yantra-receipt-${line.id}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.info(`Receipt downloaded for ${line.label}`);
+  };
 
   return (
     <AppLayout
@@ -155,6 +194,7 @@ export const StudentFinance: React.FC = () => {
           lines={due}
           emptyText="No pending dues — nice."
           ctaLabel="Pay now"
+          onAction={handlePayNow}
         />
 
         <FeeBlock
@@ -175,6 +215,7 @@ export const StudentFinance: React.FC = () => {
           emptyText="No payments on record yet."
           ctaLabel="Receipt"
           ctaIcon={<Download size={12} />}
+          onAction={handleDownloadReceipt}
         />
       </div>
 
@@ -218,7 +259,8 @@ const FeeBlock: React.FC<{
   emptyText: string;
   ctaLabel?: string;
   ctaIcon?: React.ReactNode;
-}> = ({ title, tone, toneBg, icon, lines, emptyText, ctaLabel, ctaIcon }) => (
+  onAction?: (line: FeeLine) => void;
+}> = ({ title, tone, toneBg, icon, lines, emptyText, ctaLabel, ctaIcon, onAction }) => (
   <div className="card">
     <div style={{
       display: 'flex', alignItems: 'center', gap: '0.75rem',
@@ -276,12 +318,15 @@ const FeeBlock: React.FC<{
             </div>
             <div>
               {ctaLabel && (
-                <button style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 4,
-                  padding: '0.4rem 0.85rem', borderRadius: '0.45rem',
-                  background: tone, color: 'white', border: 'none',
-                  fontWeight: 700, fontSize: '0.74rem', cursor: 'pointer',
-                }}>
+                <button
+                  onClick={() => onAction?.(line)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                    padding: '0.4rem 0.85rem', borderRadius: '0.45rem',
+                    background: tone, color: 'white', border: 'none',
+                    fontWeight: 700, fontSize: '0.74rem', cursor: 'pointer',
+                  }}
+                >
                   {ctaIcon} {ctaLabel}
                 </button>
               )}

@@ -53,11 +53,11 @@ const GradesByRole: React.FC = () => {
 };
 const ScheduleByRole: React.FC = () => {
   const { role } = useRole();
-  return role === 'student' ? <StudentSchedule /> : <Placeholder title="Schedule" />;
+  return role === 'student' ? <StudentSchedule /> : <AttendanceSchedules />;
 };
 const FinanceByRole: React.FC = () => {
   const { role } = useRole();
-  return role === 'student' ? <StudentFinance /> : <Placeholder title="Finance" />;
+  return role === 'student' ? <StudentFinance /> : <Navigate to="/dashboard" replace />;
 };
 import { ProtectedRoute } from './lib/auth/ProtectedRoute';
 import { RecorderProvider } from './lib/automation/recorder/RecorderContext';
@@ -100,7 +100,7 @@ const App = () => {
               <ProtectedRoute><Dashboard /></ProtectedRoute>
             } />
             <Route path="/profile" element={
-              <ProtectedRoute roles={['student', 'teacher']}><Profile /></ProtectedRoute>
+              <ProtectedRoute roles={['student', 'teacher', 'admin']}><Profile /></ProtectedRoute>
             } />
             <Route path="/admin" element={
               <ProtectedRoute roles={['admin']} requireActive><Admin /></ProtectedRoute>
@@ -154,7 +154,7 @@ const App = () => {
               <ProtectedRoute roles={['teacher', 'admin']} requireActive><GradeBatch /></ProtectedRoute>
             } />
             <Route path="/reports" element={
-              <ProtectedRoute roles={['teacher', 'admin']} requireActive><Placeholder title="Reports" /></ProtectedRoute>
+              <ProtectedRoute roles={['teacher', 'admin']} requireActive><AttendanceAnalytics /></ProtectedRoute>
             } />
             <Route path="/notify" element={
               <ProtectedRoute roles={['teacher', 'admin']} requireActive><ClassNotify /></ProtectedRoute>

@@ -31,7 +31,7 @@ export const SignIn: React.FC = () => {
       toast.success(`Welcome back, ${user.name || user.email.split('@')[0]} 👋`);
       const state = (location.state as LocationState | null) ?? null;
       const fallback =
-        user.role === 'admin' ? '/admin' :
+        user.role === 'admin' ? '/dashboard' :
         user.status !== 'active' ? '/pending-approval' :
         '/dashboard';
       navigate(state?.from ?? fallback, { replace: true });

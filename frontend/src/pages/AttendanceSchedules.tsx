@@ -5,8 +5,9 @@ import { AppLayout } from '../components/layout/AppLayout';
 import { useAttendance } from '../lib/AttendanceContext';
 import {
   fetchSchedules, createSchedule, deleteSchedule,
-  fetchMySubjects, type CreateSchedulePayload,
+  fetchMySubjects, fetchSubjects, type CreateSchedulePayload,
 } from '../lib/erp/api';
+import { useRole } from '../lib/useRole';
 import type { Schedule, Subject } from '../lib/erp/types';
 import { ApiError } from '../lib/api';
 
@@ -39,6 +40,7 @@ const pickName = (v: unknown, fallback = '—'): string => {
 
 export const AttendanceSchedules: React.FC = () => {
   const navigate = useNavigate();
+  const { role } = useRole();
   const { divisions } = useAttendance();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -50,9 +52,10 @@ export const AttendanceSchedules: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
+      const isAdmin = role === 'admin';
       const [list, subs] = await Promise.all([
-        fetchSchedules({ mine: true }),
-        fetchMySubjects(),
+        fetchSchedules(isAdmin ? {} : { mine: true }),
+        isAdmin ? fetchSubjects() : fetchMySubjects(),
       ]);
       setSchedules(list);
       setSubjects(subs);
@@ -61,7 +64,7 @@ export const AttendanceSchedules: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [role]);
 
   useEffect(() => { void refresh(); }, [refresh]);
 

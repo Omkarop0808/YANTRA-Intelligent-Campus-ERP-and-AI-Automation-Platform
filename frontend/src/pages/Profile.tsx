@@ -53,7 +53,29 @@ export const Profile: React.FC = () => {
   const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const [form, setForm] = useState<FormState>(() => initialState(user ?? { role: 'admin' }));
 
-  if (!user || user.role === 'admin') return null;
+  if (!user) return null;
+
+  if (user.role === 'admin') {
+    return (
+      <AppLayout pageIcon={<UserIcon size={18} />} pageTitle="Administrator Profile" pageBreadcrumb="Account">
+        <div className="card" style={{ maxWidth: 640, display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+          <div className="card-header" style={{ marginBottom: 0 }}>
+            <h3>Account Details</h3>
+            <span className="status-pill success">{user.status}</span>
+          </div>
+          <Field label="Name">
+            <input style={{ ...inputStyle, background: '#F8FAFC', color: '#0F172A', fontWeight: 600 }} value={user.name || 'Admin Console'} disabled />
+          </Field>
+          <Field label="Email">
+            <input style={{ ...inputStyle, background: '#F8FAFC', color: '#64748B' }} value={user.email} disabled />
+          </Field>
+          <Field label="Role">
+            <input style={{ ...inputStyle, background: '#F8FAFC', color: '#0F172A', textTransform: 'capitalize' }} value={user.role} disabled />
+          </Field>
+        </div>
+      </AppLayout>
+    );
+  }
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm(prev => ({ ...prev, [key]: value }));

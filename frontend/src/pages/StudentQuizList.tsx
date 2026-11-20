@@ -15,6 +15,7 @@ interface StudentQuiz {
   status: 'Assigned' | 'Upcoming' | 'Completed';
   avatar: string;
   score?: number;
+  latestAttemptId?: string;
   availableDate?: string;
 }
 
@@ -31,20 +32,33 @@ export const StudentQuizList: React.FC = () => {
       try {
         setLoading(true);
         const res = await (await import('../lib/quiz/api')).listStudentQuizzes();
-        const items = (res?.quizzes || []).map((q: any) => ({
-          id: q._id || q.id,
-          title: q.title,
-          subject: q.subject?.name || q.subject || '',
-          teacher: q.teacher?.name || q.teacher || (q.createdBy?.name || ''),
-          questions: q.questions?.length || 0,
-          marks: q.totalMarks || q.questions?.reduce((s: number, qq: any)=>s + (qq.points||0), 0) || 0,
-          duration: q.durationSeconds ? `${Math.round(q.durationSeconds/60)} Min` : (q.duration || '—'),
-          deadline: q.endsAt ? new Date(q.endsAt).toLocaleString() : (q.availableFrom ? new Date(q.availableFrom).toLocaleString() : '-'),
-          status: q.status === 'published' ? 'Assigned' : (q.status ? q.status : 'Upcoming'),
-          avatar: q.teacher?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(q.teacher?.name||q.createdBy?.name||'Tutor')}&background=0D8ABC&color=fff`,
-          score: q.latestAttempt?.score ?? undefined,
-          availableDate: q.availableFrom ? new Date(q.availableFrom).toLocaleString() : undefined
-        }));
+        const items = (res?.quizzes || []).map((q: any) => {
+          const totalMarks = q.totalMarks || q.questions?.reduce((s: number, qq: any) => s + (qq.points || 0), 0) || 0;
+          const attempt = q.latestAttempt;
+          const isCompleted = attempt && (attempt.status === 'submitted' || attempt.status === 'graded');
+          const pct = isCompleted && typeof attempt.score === 'number' && totalMarks > 0
+            ? Math.round((attempt.score / totalMarks) * 100)
+            : undefined;
+          return {
+            id: q._id || q.id,
+            title: q.title,
+            subject: q.subject?.name || q.subject || '',
+            teacher: q.teacher?.name || q.teacher || (q.createdBy?.name || ''),
+            questions: q.questions?.length || 0,
+            marks: totalMarks,
+            duration: q.settings?.timeLimitMinutes
+              ? `${q.settings.timeLimitMinutes} Min`
+              : q.durationSeconds
+                ? `${Math.round(q.durationSeconds / 60)} Min`
+                : (q.duration || '—'),
+            deadline: q.endsAt ? new Date(q.endsAt).toLocaleString() : (q.availableFrom ? new Date(q.availableFrom).toLocaleString() : '-'),
+            status: isCompleted ? 'Completed' as const : (q.status === 'published' ? 'Assigned' as const : 'Upcoming' as const),
+            avatar: q.teacher?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(q.teacher?.name || q.createdBy?.name || 'Tutor')}&background=0D8ABC&color=fff`,
+            score: pct,
+            latestAttemptId: attempt?._id,
+            availableDate: q.availableFrom ? new Date(q.availableFrom).toLocaleString() : undefined,
+          };
+        });
         if (mounted) setQuizzes(items);
       } catch (err) {
         console.error('Failed loading student quizzes', err);
@@ -53,6 +67,11 @@ export const StudentQuizList: React.FC = () => {
     load();
     return () => { mounted = false; };
   }, []);
+
+  const uniqueSubjects = Array.from(new Set(quizzes.map(q => q.subject).filter(Boolean)));
+  const filteredQuizzes = quizzes
+    .filter(q => subjectFilter === 'All Subjects' || q.subject === subjectFilter)
+    .filter(q => statusFilter === 'All Status' || q.status === statusFilter);
 
   return (
     <AppLayout
@@ -101,10 +120,7 @@ export const StudentQuizList: React.FC = () => {
               style={{ border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '0.5rem 1rem', fontSize: '0.8rem', outline: 'none', backgroundColor: 'white', fontWeight: 600, color: '#334155', cursor: 'pointer' }}
             >
               <option>All Subjects</option>
-              <option>Java Programming</option>
-              <option>Data Structures</option>
-              <option>UI Design</option>
-              <option>DBMS</option>
+              {uniqueSubjects.map(sub => <option key={sub}>{sub}</option>)}
             </select>
             <select 
               value={statusFilter} 
@@ -128,9 +144,9 @@ export const StudentQuizList: React.FC = () => {
           </div>
         )}
 
-        {/* Grid layout exactly matching page 3 */}
+        {/* Grid layout */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
-          {quizzes.map(quiz => (
+          {filteredQuizzes.map(quiz => (
             <div 
               key={quiz.id} 
               style={{ 
@@ -179,7 +195,10 @@ export const StudentQuizList: React.FC = () => {
                   <div style={{ height: 6, backgroundColor: '#E5E7EB', borderRadius: 3, overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${quiz.score}%`, backgroundColor: 'var(--primary)', borderRadius: 3 }} />
                   </div>
-                  <button style={{ backgroundColor: 'white', border: '1px solid #CBD5E1', color: 'var(--primary)', padding: '0.55rem', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', marginTop: '0.5rem' }}>
+                  <button
+                    onClick={() => navigate(quiz.latestAttemptId ? `/quiz/result/${quiz.latestAttemptId}` : `/quiz/take/${quiz.id}/details`)}
+                    style={{ backgroundColor: 'white', border: '1px solid #CBD5E1', color: 'var(--primary)', padding: '0.55rem', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', marginTop: '0.5rem' }}
+                  >
                     View Result
                   </button>
                 </div>

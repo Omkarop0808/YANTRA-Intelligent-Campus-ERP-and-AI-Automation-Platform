@@ -48,6 +48,7 @@ const Ctx = createContext<ResourcesContextValue | null>(null);
 
 export const ResourcesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const isStaff = user?.role === 'teacher' || user?.role === 'admin';
   const isTeacher = user?.role === 'teacher';
 
   const [divisions, setDivisions] = useState<Division[]>([]);
@@ -61,9 +62,9 @@ export const ResourcesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [items, setItems] = useState<Resource[]>([]);
   const [draftId, setDraftId] = useState<string | null>(null);
 
-  /* ---- Load divisions + subjects (teacher only) -------------------- */
+  /* ---- Load divisions + subjects (teacher & admin) ----------------- */
   useEffect(() => {
-    if (!isTeacher) return;
+    if (!isStaff) return;
     let cancelled = false;
     setLoading(l => ({ ...l, divisions: true, subjects: true }));
     Promise.all([fetchMyDivisions(), fetchMySubjects()])
@@ -79,18 +80,18 @@ export const ResourcesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (!cancelled) setLoading(l => ({ ...l, divisions: false, subjects: false }));
       });
     return () => { cancelled = true; };
-  }, [isTeacher]);
+  }, [isStaff]);
 
   /* ---- Load resources for the active division+subject -------------- */
   const refresh = useCallback(async () => {
-    if (!isTeacher) return;
+    if (!isStaff) return;
     if (!divisionId || !subjectId) { setItems([]); return; }
     setLoading(l => ({ ...l, items: true }));
     try {
       const list = await listResources({
         divisionId,
         subjectId,
-        mine: true,
+        mine: isTeacher,
       });
       setItems(list);
     } catch (e: unknown) {
@@ -98,7 +99,7 @@ export const ResourcesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } finally {
       setLoading(l => ({ ...l, items: false }));
     }
-  }, [isTeacher, divisionId, subjectId]);
+  }, [isStaff, isTeacher, divisionId, subjectId]);
 
   useEffect(() => { void refresh(); }, [refresh]);
 

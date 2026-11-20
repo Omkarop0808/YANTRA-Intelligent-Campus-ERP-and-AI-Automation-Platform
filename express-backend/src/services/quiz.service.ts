@@ -640,9 +640,41 @@ export const listQuizzesForStudent = async (
     status: 'published',
   } as any;
 
-  const quizzes = await Quiz.find(q)
-    .populate(POPULATE)
-    .sort({ publishedAt: -1, updatedAt: -1 });
+  const [quizzes, attempts] = await Promise.all([
+    Quiz.find(q)
+      .populate(POPULATE)
+      .sort({ publishedAt: -1, updatedAt: -1 })
+      .lean(),
+    QuizAttempt.find({ student: studentId })
+      .sort({ submittedAt: -1, startedAt: -1 })
+      .lean(),
+  ]);
 
-  return quizzes;
+  const latestByQuiz = new Map<string, any>();
+  for (const a of attempts) {
+    const qid = String(a.quiz);
+    if (!latestByQuiz.has(qid)) {
+      latestByQuiz.set(qid, a);
+    }
+  }
+
+  return quizzes.map((quiz: any) => {
+    const attempt = latestByQuiz.get(String(quiz._id));
+    const totalMarks = (quiz.questions || []).reduce(
+      (sum: number, qq: any) => sum + (Number(qq.points) || 0),
+      0
+    );
+    return {
+      ...quiz,
+      totalMarks,
+      latestAttempt: attempt
+        ? {
+            _id: String(attempt._id),
+            status: attempt.status,
+            score: attempt.score,
+            submittedAt: attempt.submittedAt,
+          }
+        : undefined,
+    };
+  });
 };

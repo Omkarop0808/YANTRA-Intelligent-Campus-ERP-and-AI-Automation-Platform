@@ -2,7 +2,7 @@ import React from 'react';
 import {
   LayoutDashboard, UserCheck, GraduationCap, Calendar, FolderOpen,
   CreditCard, Cpu, ClipboardList, MessageSquare, Plus,
-  Megaphone, FileSpreadsheet, Send,
+  Megaphone, FileSpreadsheet, Send, ShieldCheck, BarChart3,
 } from 'lucide-react';
 import type { Role } from './useRole';
 
@@ -33,6 +33,24 @@ export const teacherNav: NavItem[] = [
   { name: 'Automation',          icon: <Cpu size={20} />,             path: '/automation' },
 ];
 
+export const adminNav: NavItem[] = [
+  { name: 'Admin Overview',        icon: <LayoutDashboard size={20} />, path: '/dashboard' },
+  { name: 'Teacher Verifications', icon: <ShieldCheck size={20} />,     path: '/admin' },
+  { name: 'Attendance',            icon: <UserCheck size={20} />,       path: '/attendance' },
+  { name: 'Schedules',             icon: <Calendar size={20} />,        path: '/attendance/schedules' },
+  { name: 'Quizzes',               icon: <ClipboardList size={20} />,   path: '/quizzes' },
+  { name: 'Assignments & Notes',   icon: <FolderOpen size={20} />,      path: '/assignments' },
+  { name: 'Grade Batch',           icon: <FileSpreadsheet size={20} />, path: '/grade-batch' },
+  { name: 'Chat Interface',        icon: <MessageSquare size={20} />,   path: '/chat-interface' },
+  { name: 'Automation',            icon: <Cpu size={20} />,             path: '/automation' },
+];
+
+export const adminTools: NavItem[] = [
+  { name: 'Analytics',    icon: <BarChart3 size={20} />, path: '/attendance/analytics' },
+  { name: 'Announcement', icon: <Megaphone size={20} />, path: '/announcements' },
+  { name: 'Notify Class', icon: <Send size={20} />,      path: '/notify' },
+];
+
 export const teacherTools: NavItem[] = [
   { name: 'Schedule', icon: <Calendar size={20} />, path: '/attendance/schedules' },
   { name: 'Create Quiz', icon: <Plus size={20} />, path: '/quiz/create' },
@@ -45,4 +63,4 @@ export const teacherQuickActions: NavItem[] = [
 ];
 
 export const navForRole = (role: Role): NavItem[] =>
-  role === 'teacher' ? teacherNav : studentNav;
+  role === 'admin' ? adminNav : role === 'teacher' ? teacherNav : studentNav;

@@ -63,6 +63,17 @@ export const TeacherQuizOverview: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('All Statuses');
   const [viewingQuizId, setViewingQuizId] = useState<string | null>(null);
 
+  const handlePublishQuiz = async (id: string) => {
+    try {
+      await (await import('../lib/quiz/api')).publishQuiz(id);
+      toast.success('Quiz published for students');
+      reload();
+    } catch (err: any) {
+      console.error('Publish failed', err);
+      toast.error(err?.message || 'Failed to publish quiz');
+    }
+  };
+
   const handleDeleteQuiz = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this quiz?')) return;
     try {
@@ -296,7 +307,7 @@ export const TeacherQuizOverview: React.FC = () => {
                   )}
                   {quiz.status === 'Draft' && (
                     <button 
-                      onClick={() => navigate('/quiz/create')}
+                      onClick={() => handlePublishQuiz(quiz.id)}
                       style={{ backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', padding: '0.5rem 1.25rem', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                     >
                       Publish Quiz
@@ -335,11 +346,6 @@ export const TeacherQuizOverview: React.FC = () => {
             </div>
           ))}
         </div>
-
-        {/* Load More Button */}
-        <button style={{ alignSelf: 'center', backgroundColor: 'white', border: '1px solid #CBD5E1', color: 'var(--primary)', borderRadius: 'var(--radius-md)', padding: '0.65rem 2rem', fontSize: '0.825rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '1rem' }}>
-          Load More Quizzes
-        </button>
       </div>
 
       {viewingQuizId && (

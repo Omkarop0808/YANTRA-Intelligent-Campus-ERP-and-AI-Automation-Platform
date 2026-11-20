@@ -4,7 +4,7 @@ import { LogOut, Menu, User } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Logo } from '../ui/Logo';
 import {
-  studentNav, teacherNav, teacherTools, teacherQuickActions, type NavItem,
+  adminNav, adminTools, studentNav, teacherNav, teacherTools, teacherQuickActions, type NavItem,
 } from '../../lib/navConfig';
 import type { Role } from '../../lib/useRole';
 import { useAuth } from '../../lib/auth/AuthContext';
@@ -37,7 +37,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   role = 'student',
 }) => {
   const isTeacher = role === 'teacher';
-  const primaryNav = isTeacher ? teacherNav : studentNav;
+  const isAdmin = role === 'admin';
+  const primaryNav = isAdmin ? adminNav : isTeacher ? teacherNav : studentNav;
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -57,13 +58,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {!isCollapsed && (
           <div className="sidebar-logo-block">
             <Logo />
-            <span className="sidebar-logo-tagline">Education Management</span>
+            <span className="sidebar-logo-tagline">
+              {isAdmin ? 'Admin Console' : isTeacher ? 'Faculty Workspace' : 'Education Management'}
+            </span>
           </div>
         )}
       </div>
 
       <nav className="sidebar-nav">
         <NavList items={primaryNav} isCollapsed={isCollapsed} />
+
+        {isAdmin && (
+          <div className={`sidebar-section ${isCollapsed ? 'collapsed' : ''}`}>
+            {!isCollapsed && <div className="sidebar-section-title">Campus Ops</div>}
+            <NavList items={adminTools} isCollapsed={isCollapsed} />
+          </div>
+        )}
 
         {isTeacher && (
           <div className={`sidebar-section ${isCollapsed ? 'collapsed' : ''}`}>

@@ -75,9 +75,9 @@ export const AttendanceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   });
   const [error, setError] = useState<string | null>(null);
 
-  /* ---- Load teacher's divisions on login ------------------------- */
+  /* ---- Load teacher/admin divisions on login --------------------- */
   useEffect(() => {
-    if (!user || user.role !== 'teacher') return;
+    if (!user || (user.role !== 'teacher' && user.role !== 'admin')) return;
     let cancelled = false;
     setLoading(l => ({ ...l, divisions: true }));
     fetchMyDivisions()
