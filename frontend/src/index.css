@@ -1,0 +1,325 @@
+:root {
+  /* ---- Stitch palette ------------------------------------------------ */
+  --primary: #004ac6;
+  --primary-hover: #003ea8;
+  --primary-container: #2563eb;
+  --primary-fixed: #dbe1ff;
+  --primary-fixed-dim: #b4c5ff;
+  --on-primary: #ffffff;
+  --on-primary-container: #eeefff;
+  --on-primary-fixed: #00174b;
+  --on-primary-fixed-variant: #003ea8;
+
+  --secondary: #2b49e1;
+  --secondary-container: #4965fa;
+  --secondary-fixed: #dee0ff;
+  --secondary-fixed-dim: #bac3ff;
+  --on-secondary: #ffffff;
+  --on-secondary-container: #fffbff;
+  --on-secondary-fixed: #000f5c;
+  --on-secondary-fixed-variant: #002ecb;
+
+  --tertiary: #943700;
+  --tertiary-container: #bc4800;
+  --tertiary-fixed: #ffdbcd;
+  --tertiary-fixed-dim: #ffb596;
+  --on-tertiary: #ffffff;
+  --on-tertiary-container: #ffede6;
+  --on-tertiary-fixed: #360f00;
+  --on-tertiary-fixed-variant: #7d2d00;
+
+  --surface: #fcf8f8;
+  --surface-bright: #fcf8f8;
+  --surface-dim: #dcd9d9;
+  --surface-variant: #e5e2e1;
+  --surface-tint: #0053db;
+  --surface-container: #f1edec;
+  --surface-container-low: #f6f3f2;
+  --surface-container-lowest: #ffffff;
+  --surface-container-high: #ebe7e7;
+  --surface-container-highest: #e5e2e1;
+  --inverse-surface: #313030;
+  --inverse-on-surface: #f3f0ef;
+  --inverse-primary: #b4c5ff;
+
+  --background: #fcf8f8;
+  --background-subtle: #F6F5F4;
+  --on-background: #1c1b1b;
+  --on-surface: #1c1b1b;
+  --on-surface-variant: #434655;
+
+  --border-default: #E2E8F0;
+  --outline: #737686;
+  --outline-variant: #c3c6d7;
+
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+
+  --status-pending-bg: #FEF9C3;
+  --status-pending-text: #854D0E;
+  --status-published-bg: #DCFCE7;
+  --status-published-text: #166534;
+  --status-draft-bg: #F1F5F9;
+  --status-draft-text: #475569;
+
+  /* ---- Legacy aliases (kept so existing components still resolve) ---- */
+  --bg-color: var(--background);
+  --bg-card: var(--surface-container-lowest);
+  --text-main: var(--on-surface);
+  --text-muted: var(--on-surface-variant);
+  --border-color: var(--border-default);
+
+  /* ---- Typography ---------------------------------------------------- */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* ---- Spacing (Stitch) --------------------------------------------- */
+  --space-baseline: 4px;
+  --space-container-margin: 24px;
+  --space-gutter-mobile: 16px;
+  --space-gutter-desktop: 20px;
+  --space-input-padding-y: 10px;
+  --space-input-padding-x: 12px;
+  --space-card-padding: 16px;
+
+  /* ---- Radius (Stitch) ---------------------------------------------- */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  /* ---- Shadows / focus ---------------------------------------------- */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.10), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+  --focus-ring: 0 0 0 3px rgba(0, 74, 198, 0.20);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Form controls don't inherit font-family by default in most browsers
+ * (they fall back to the UA's monospace/serif). Force every interactive
+ * element to follow the site's Inter so chat buttons, table cells, and
+ * inline pipeline labels match the surrounding text. */
+button, input, textarea, select, table {
+  font-family: inherit;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Base Layout Classes */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-header {
+  padding: 1.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+}
+
+.page-content {
+  display: flex;
+  flex: 1;
+}
+
+.split-left {
+  flex: 1;
+  background-color: #F3F4F6;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.split-right {
+  flex: 1;
+  background-color: white;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer {
+  padding: 1.5rem 3rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #F9FAFB;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.footer-links a:hover {
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+.auth-form-container {
+  width: 100%;
+  max-width: 500px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 3rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-form-container h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.auth-form-container p {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.hero-text {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* -------------------------------------------------------------------------- */
+/*  Stitch typography scale — apply via class names on any element            */
+/* -------------------------------------------------------------------------- */
+
+.text-display-lg {
+  font-family: 'Inter', sans-serif;
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.text-headline-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+.text-headline-md-mobile {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+.text-headline-sm {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.text-body-lg {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.text-body-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.text-label-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+.text-label-sm {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* Material Symbols Outlined — matches the Stitch icon font */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
