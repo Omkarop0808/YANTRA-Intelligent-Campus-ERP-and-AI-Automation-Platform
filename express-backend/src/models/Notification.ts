@@ -13,6 +13,7 @@ export interface NotificationDoc extends Document {
   link?: string;
   /** Optional metadata (e.g. attached PDF URL, division code). */
   meta?: Record<string, unknown>;
+  dedupeKey?: string;
   read: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -27,6 +28,7 @@ const notificationSchema = new Schema<NotificationDoc>(
     body:      { type: String, required: true, trim: true },
     link:      { type: String, trim: true },
     meta:      { type: Schema.Types.Mixed },
+    dedupeKey: { type: String, unique: true, sparse: true, index: true },
     read:      { type: Boolean, default: false, index: true },
   },
   { timestamps: true },

@@ -435,7 +435,7 @@ Respond with JSON ONLY in EXACTLY this shape (no prose, no markdown fences):
   "feedback": "<2-3 sentence overall feedback>",
   "strengths": ["..."],
   "improvements": ["..."],
-  "flags": [<subset of: "late", "blank", "plagiarism_suspected", "ai_generated_suspected", "unreadable">]
+  "flags": [<subset of: "late", "blank", "similarity_flagged", "plagiarism_suspected", "ai_generated_suspected", "unreadable">]
 }}
 
 Compute proposedScore as: sum over criteria of (score / maxPoints * weight),

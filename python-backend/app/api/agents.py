@@ -15,7 +15,9 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, File, Form, Request, UploadFile
 
 from app.agents.erp_agent import run_agent
+from app.core.config import get_settings
 from app.core.errors import unauthorized
+from app.core.rate_limit import limiter
 from app.core.security import AuthPrincipal, require_active
 from app.integrations.erp_client import UploadFile as ErpUploadFile
 from app.schemas.chat import ChatRequest, ChatResponse
@@ -33,6 +35,7 @@ def _bearer_token(request: Request) -> str:
 
 
 @router.post("/chat", response_model=ChatResponse, response_model_by_alias=True)
+@limiter.limit(get_settings().chat_rate_limit)
 async def chat(
     body: ChatRequest,
     request: Request,

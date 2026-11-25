@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, HelpCircle } from 'lucide-react';
+import { Search, HelpCircle, Menu } from 'lucide-react';
 import { useAuth } from '../../lib/auth/AuthContext';
 import { NotificationBell } from './NotificationBell';
 import type { AppUser } from '../../lib/auth/types';
@@ -25,18 +25,20 @@ interface TopBarProps {
   actions?: React.ReactNode;
   /** When true, show the global search instead of the title block. */
   showSearch?: boolean;
+  /** Mobile hamburger toggle handler */
+  onMenuToggle?: () => void;
 }
 
 /**
  * Every page renders the same TopBar shell.
- * - Left slot: page identity (icon + title) OR the global search.
+ * - Left slot: mobile menu toggle + page identity (icon + title) OR the global search.
  * - Middle slot: page-specific actions (filters, primary buttons).
  * - Right slot: ALWAYS bell + help + user — never overridden.
  *
  * Pages should never hand-roll their own .dashboard-topbar; pass slots instead.
  */
 export const TopBar: React.FC<TopBarProps> = ({
-  icon, title, breadcrumb, actions, showSearch = false,
+  icon, title, breadcrumb, actions, showSearch = false, onMenuToggle,
 }) => {
   const { user } = useAuth();
   const role = user?.role ?? 'student';
@@ -47,16 +49,26 @@ export const TopBar: React.FC<TopBarProps> = ({
   return (
     <div className="dashboard-topbar">
       <div className="topbar-left">
+        {onMenuToggle && (
+          <button
+            type="button"
+            className="topbar-mobile-menu-btn"
+            onClick={onMenuToggle}
+            aria-label="Open navigation menu"
+          >
+            <Menu size={22} />
+          </button>
+        )}
         {showSearch ? (
           <div className="topbar-search">
             <Search size={18} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} />
             <input
               type="text"
               placeholder={role === 'teacher'
-                ? 'Search student ID, modules, or schedules...'
+                ? 'Search student ID, modules...'
                 : role === 'admin'
-                  ? 'Search users, courses, or audit logs...'
-                  : 'Search modules, files, or tasks...'}
+                  ? 'Search users, courses...'
+                  : 'Search modules, files...'}
             />
           </div>
         ) : title || icon ? (
@@ -75,7 +87,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="topbar-right">
         <div className="topbar-icons">
           <NotificationBell />
-          <HelpCircle size={20} />
+          <HelpCircle size={20} className="topbar-help-icon" />
         </div>
         <div className="topbar-user">
           <div className="topbar-user-info">

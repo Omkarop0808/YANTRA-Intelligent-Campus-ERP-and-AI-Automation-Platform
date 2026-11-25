@@ -75,6 +75,8 @@ export const requestResubmit = asyncHandler(async (req: Request, res: Response) 
   res.json({ submission: doc });
 });
 
+import * as similarityService from '../services/similarity.service';
+
 export const notifyNonSubmitters = asyncHandler(async (req: Request, res: Response) => {
   if (!req.auth) throw Unauthorized();
   const resourceId = req.params.id;
@@ -82,5 +84,15 @@ export const notifyNonSubmitters = asyncHandler(async (req: Request, res: Respon
 
   const message = typeof req.body?.message === 'string' ? req.body.message : undefined;
   const result = await submissions.notifyNonSubmitters(resourceId, req.auth.sub, message);
+  res.json(result);
+});
+
+export const checkSimilarity = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.auth) throw Unauthorized();
+  const submissionId = req.params.id;
+  if (!submissionId) throw BadRequest('Submission id required');
+
+  const threshold = req.body?.threshold ? Number(req.body.threshold) : 0.70;
+  const result = await similarityService.checkSubmissionSimilarity(submissionId, threshold);
   res.json(result);
 });

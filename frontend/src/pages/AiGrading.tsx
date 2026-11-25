@@ -28,7 +28,8 @@ import type {
 const flagLabel: Record<SubmissionFlag, string> = {
   late: 'Late',
   blank: 'Blank',
-  plagiarism_suspected: 'Plagiarism?',
+  similarity_flagged: 'High Similarity',
+  plagiarism_suspected: 'Similarity Flag',
   ai_generated_suspected: 'AI-generated?',
   unreadable: 'Unreadable',
 };
@@ -36,6 +37,7 @@ const flagLabel: Record<SubmissionFlag, string> = {
 const flagColor: Record<SubmissionFlag, string> = {
   late: '#92400E',
   blank: '#475569',
+  similarity_flagged: '#B91C1C',
   plagiarism_suspected: '#B91C1C',
   ai_generated_suspected: '#7C3AED',
   unreadable: '#475569',
@@ -44,6 +46,7 @@ const flagColor: Record<SubmissionFlag, string> = {
 const flagBg: Record<SubmissionFlag, string> = {
   late: '#FEF3C7',
   blank: '#F1F5F9',
+  similarity_flagged: '#FEE2E2',
   plagiarism_suspected: '#FEE2E2',
   ai_generated_suspected: '#EDE9FE',
   unreadable: '#F1F5F9',

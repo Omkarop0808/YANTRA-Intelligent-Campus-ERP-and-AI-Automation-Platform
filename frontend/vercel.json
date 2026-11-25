@@ -4,11 +4,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://18.234.50.17:3000/api/:path*"
+      "destination": "https://yantra-express-api.onrender.com/api/:path*"
     },
     {
       "source": "/python-app/:path*",
-      "destination": "http://18.234.50.17:8000/python-app/:path*"
+      "destination": "https://yantra-python-ai.onrender.com/python-app/:path*"
     },
     {
       "source": "/(.*)",

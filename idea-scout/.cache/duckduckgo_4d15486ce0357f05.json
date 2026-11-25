@@ -1,0 +1,44 @@
+[
+  {
+    "title": "AutoRubric - Research-Backed LLM Evaluation",
+    "url": "https://autorubric.org/",
+    "source": "duckduckgo",
+    "description": "AutoRubric brings together best practices from rubric science and LLM-as-a-Judge research, and grades with AI judges: LLMs, …",
+    "popularity": 10,
+    "pushed_at": "2026-11-07T12:14:50.155602+00:00",
+    "archived": false,
+    "topics": [
+      "web",
+      "article"
+    ],
+    "readme_snippet": "AutoRubric brings together best practices from rubric science and LLM-as-a-Judge research, and grades with AI judges: LLMs, …"
+  },
+  {
+    "title": "The LLM Rubric Auto-grader | Codio Documentation",
+    "url": "https://docs.codio.com/instructors/authoring/assessments/llm-based-auto-rubric.html",
+    "source": "duckduckgo",
+    "description": "The LLM Rubric Autograde assessment automatically grades student submissions using an LLM-generated rubric and displays …",
+    "popularity": 10,
+    "pushed_at": "2026-11-07T12:14:50.155611+00:00",
+    "archived": false,
+    "topics": [
+      "web",
+      "article"
+    ],
+    "readme_snippet": "The LLM Rubric Autograde assessment automatically grades student submissions using an LLM-generated rubric and displays …"
+  },
+  {
+    "title": "[2603.00077] Autorubric: A Unifying Framework for Rubric-Based LLM ...",
+    "url": "https://arxiv.org/abs/2603.00077",
+    "source": "duckduckgo",
+    "description": "Feb 13, 2026 · Rubric-based LLM judges have become indispensable for evaluating and optimizing systems on non-verifiable tasks, …",
+    "popularity": 10,
+    "pushed_at": "2026-11-07T12:14:50.155614+00:00",
+    "archived": false,
+    "topics": [
+      "web",
+      "article"
+    ],
+    "readme_snippet": "Feb 13, 2026 · Rubric-based LLM judges have become indispensable for evaluating and optimizing systems on non-verifiable tasks, …"
+  }
+]

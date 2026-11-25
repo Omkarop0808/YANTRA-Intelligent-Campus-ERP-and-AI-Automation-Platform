@@ -33,6 +33,10 @@ dependencies = [
     "pypdf>=5.0.0",
     # PDF generation (auto-generated assignment / rubric breakdown exports)
     "reportlab>=4.2.0",
+    "slowapi>=0.1.10",
+    "motor>=3.7.1",
+    "pymongo>=4.20.1",
+    "redis>=8.1.0",
 ]
 
 [project.optional-dependencies]
@@ -54,3 +58,10 @@ ignore = ["E501"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+pythonpath = ["."]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.4.0",
+]

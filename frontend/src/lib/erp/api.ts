@@ -1,6 +1,6 @@
 import { apiRequest, API_BASE, getToken, ApiError } from '../api';
 import type {
-  AttendanceMarkEntry, AttendanceRecord, Division, DivisionStatRow,
+  AcademicYear, AttendanceMarkEntry, AttendanceRecord, Branch, Division, DivisionStatRow,
   EligibilityRow, Lecture, RosterEntry, Schedule, StudentLite,
   StudentSubjectSummary, Subject, SubjectAverageRow,
 } from './types';
@@ -43,6 +43,46 @@ export const fetchSubjects = async (): Promise<Subject[]> => {
 export const fetchMySubjects = async (): Promise<Subject[]> => {
   const data = await apiRequest<{ subjects: Subject[] }>('/academic/subjects?mine=1');
   return data.subjects;
+};
+
+export const fetchBranches = async (): Promise<Branch[]> => {
+  const data = await apiRequest<{ branches: Branch[] }>('/academic/branches');
+  return data.branches;
+};
+
+export const fetchAcademicYears = async (): Promise<{ years: AcademicYear[]; current: AcademicYear | null }> => {
+  return apiRequest<{ years: AcademicYear[]; current: AcademicYear | null }>('/academic/academic-years');
+};
+
+export interface CreateDivisionPayload {
+  name: string;
+  code?: string;
+  year?: 'FE' | 'SE' | 'TE' | 'BE';
+  branch: string;
+  academicYear: string;
+}
+
+export const createDivision = async (payload: CreateDivisionPayload): Promise<Division> => {
+  const data = await apiRequest<{ division: Division }>('/academic/divisions', {
+    method: 'POST',
+    body: payload,
+  });
+  return data.division;
+};
+
+export interface CreateSubjectPayload {
+  code: string;
+  name: string;
+  division: string;
+  credits?: number;
+}
+
+export const createSubject = async (payload: CreateSubjectPayload): Promise<Subject> => {
+  const data = await apiRequest<{ subject: Subject }>('/academic/subjects', {
+    method: 'POST',
+    body: payload,
+  });
+  return data.subject;
 };
 
 /* ---------------------------------------------------------------- */
@@ -188,6 +228,26 @@ export const fetchDivisionEligibility = async (
     `/divisions/${divisionId}/attendance/eligibility`
   );
   return data.eligibility;
+};
+
+export interface FocusStudentItem {
+  student: { id: string; name: string; email: string; rollNumber?: string };
+  division: { id: string; name?: string; code?: string };
+  riskScore: number;
+  riskTier: 'HIGH' | 'MEDIUM' | 'LOW';
+  factors: {
+    attendance: { total: number; attended: number; percentage: number; classesNeeded: number; isDefaulter: boolean };
+    quizzes: { attempted: number; failedCount: number; averageScore: number };
+    assignments: { missingCount: number };
+  };
+  reasons: string[];
+}
+
+export const fetchFocusList = async (divisionId?: string): Promise<FocusStudentItem[]> => {
+  const data = await apiRequest<{ focusList: FocusStudentItem[] }>(
+    `/attendance/focus-list${qs({ divisionId })}`
+  );
+  return data.focusList;
 };
 
 /* ---------------------------------------------------------------- */

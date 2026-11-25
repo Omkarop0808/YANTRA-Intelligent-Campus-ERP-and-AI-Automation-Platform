@@ -14,7 +14,11 @@ router.post(
   validateBody(markAttendanceSchema),
   ctl.markAttendance
 );
-router.get('/lectures/:id/attendance', ctl.getAttendanceForLecture);
+router.get(
+  '/lectures/:id/attendance',
+  requireRole('teacher', 'admin'),
+  ctl.getAttendanceForLecture
+);
 router.get(
   '/lectures/:id/report.pdf',
   requireRole('teacher', 'admin'),
@@ -22,6 +26,8 @@ router.get(
 );
 
 router.get('/me/attendance', ctl.getMyAttendance);
+router.get('/attendance/recovery-plan', ctl.getRecoveryPlan);
+router.get('/attendance/focus-list', requireRole('teacher', 'admin'), ctl.getFocusList);
 router.get('/students/:id/attendance', ctl.getStudentAttendance);
 
 router.get(

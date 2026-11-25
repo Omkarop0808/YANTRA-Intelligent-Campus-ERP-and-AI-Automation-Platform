@@ -4,9 +4,10 @@ import {
   createStudent, createTeacher, findUserByEmailWithPassword, findUserById,
 } from '../services/user.service';
 import { signAccessToken, verifyPassword } from '../services/auth.service';
+import type { Role } from '../models/User';
 import { Forbidden, Unauthorized } from '../utils/http-errors';
 
-const issueToken = (user: { _id: { toString(): string }; role: 'student' | 'teacher' | 'admin'; status: 'pending' | 'active' | 'rejected' }) =>
+const issueToken = (user: { _id: { toString(): string }; role: Role; status: 'pending' | 'active' | 'rejected' }) =>
   signAccessToken({ sub: user._id.toString(), role: user.role, status: user.status });
 
 export const registerStudent = asyncHandler(async (req: Request, res: Response) => {

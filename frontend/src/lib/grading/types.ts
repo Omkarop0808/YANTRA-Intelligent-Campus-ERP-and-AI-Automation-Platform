@@ -5,6 +5,7 @@ export type GradeReviewStatus = 'none' | 'proposed' | 'approved' | 'published';
 export type SubmissionFlag =
   | 'late'
   | 'blank'
+  | 'similarity_flagged'
   | 'plagiarism_suspected'
   | 'ai_generated_suspected'
   | 'unreadable';

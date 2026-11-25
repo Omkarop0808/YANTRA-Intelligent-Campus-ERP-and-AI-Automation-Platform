@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/async-handler';
 import * as attendance from '../services/attendance.service';
 import { streamDivisionReportPdf, streamLectureRosterPdf } from '../services/pdf.service';
-import { BadRequest, Unauthorized } from '../utils/http-errors';
+import { BadRequest, Forbidden, Unauthorized } from '../utils/http-errors';
 
 export const markAttendance = asyncHandler(async (req: Request, res: Response) => {
   if (!req.auth) throw Unauthorized();
@@ -24,8 +24,12 @@ export const getAttendanceForLecture = asyncHandler(async (req, res) => {
 });
 
 export const getStudentAttendance = asyncHandler(async (req, res) => {
+  if (!req.auth) throw Unauthorized();
   const studentId = req.params.id;
   if (!studentId) throw BadRequest('Student id required');
+  if (req.auth.role === 'student' && req.auth.sub !== studentId) {
+    throw Forbidden('Students can only access their own attendance');
+  }
   const { subjectId } = req.query as Record<string, string | undefined>;
   res.json({ summary: await attendance.studentSubjectAttendance(studentId, subjectId) });
 });
@@ -36,21 +40,30 @@ export const getMyAttendance = asyncHandler(async (req, res) => {
   res.json({ summary: await attendance.studentSubjectAttendance(req.auth.sub, subjectId) });
 });
 
+export const getRecoveryPlan = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.auth) throw Unauthorized();
+  const targetId = req.query.studentId && (req.auth.role === 'teacher' || req.auth.role === 'admin')
+    ? String(req.query.studentId)
+    : req.auth.sub;
+  const plan = await attendance.getStudentRecoveryPlan(targetId);
+  res.json({ recoveryPlan: plan });
+});
+
 export const getDivisionAttendanceStats = asyncHandler(async (req, res) => {
   const divisionId = req.params.id;
-  if (!divisionId) throw BadRequest('Division id required');
+  if (!divisionId || !Types.ObjectId.isValid(divisionId)) throw BadRequest('Valid division id required');
   res.json({ stats: await attendance.divisionAttendanceStats(divisionId) });
 });
 
 export const getDivisionSubjectAverages = asyncHandler(async (req, res) => {
   const divisionId = req.params.id;
-  if (!divisionId) throw BadRequest('Division id required');
+  if (!divisionId || !Types.ObjectId.isValid(divisionId)) throw BadRequest('Valid division id required');
   res.json({ averages: await attendance.divisionSubjectAverages(divisionId) });
 });
 
 export const getDivisionEligibility = asyncHandler(async (req, res) => {
   const divisionId = req.params.id;
-  if (!divisionId) throw BadRequest('Division id required');
+  if (!divisionId || !Types.ObjectId.isValid(divisionId)) throw BadRequest('Valid division id required');
   res.json({ eligibility: await attendance.divisionEligibility(divisionId) });
 });
 
@@ -62,9 +75,17 @@ export const downloadLectureRosterPdf = asyncHandler(async (req, res) => {
   await streamLectureRosterPdf(lectureId, res);
 });
 
+import * as focusService from '../services/focus-list.service';
+
+export const getFocusList = asyncHandler(async (req: Request, res: Response) => {
+  const divisionId = req.query.divisionId ? String(req.query.divisionId) : undefined;
+  const focusList = await focusService.getFocusList(divisionId);
+  res.json({ focusList });
+});
+
 export const downloadDivisionReportPdf = asyncHandler(async (req, res) => {
   const divisionId = req.params.id;
-  if (!divisionId) throw BadRequest('Division id required');
+  if (!divisionId || !Types.ObjectId.isValid(divisionId)) throw BadRequest('Valid division id required');
   const raw = req.query.studentIds;
   const studentIds = typeof raw === 'string' && raw.length > 0
     ? raw.split(',').map(s => s.trim()).filter(Boolean)

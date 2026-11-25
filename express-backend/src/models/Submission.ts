@@ -25,6 +25,7 @@ export interface CriterionScore {
 export type SubmissionFlag =
   | 'late'
   | 'blank'
+  | 'similarity_flagged'
   | 'plagiarism_suspected'
   | 'ai_generated_suspected'
   | 'unreadable';
@@ -49,6 +50,7 @@ export interface SubmissionDoc extends Document {
   student:  Types.ObjectId;   // ref → User (student)
   status: SubmissionStatus;
   attachments: ResourceAttachment[];
+  textContent?: string;
   score?: number;
   gradedAt?: Date;
   gradedBy?: Types.ObjectId;        // teacher
@@ -102,7 +104,7 @@ const proposalSchema = new Schema<GradeProposal>(
       type: [{
         type: String,
         enum: [
-          'late', 'blank', 'plagiarism_suspected',
+          'late', 'blank', 'similarity_flagged', 'plagiarism_suspected',
           'ai_generated_suspected', 'unreadable',
         ],
       }],
@@ -127,6 +129,7 @@ const submissionSchema = new Schema<SubmissionDoc>(
       index: true,
     },
     attachments: { type: [attachmentSchema], default: [] },
+    textContent: { type: String, trim: true },
     score:    { type: Number, min: 0 },
     gradedAt: { type: Date },
     gradedBy: { type: Schema.Types.ObjectId, ref: 'User' },

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { useSidebarState } from '../../lib/useSidebarState';
@@ -27,13 +28,28 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   pageIcon, pageTitle, pageBreadcrumb, pageActions, showSearch,
   bottomBar, background, padded = true,
 }) => {
-  const { collapsed, toggle } = useSidebarState();
+  const { collapsed, toggle, close } = useSidebarState();
   const { role } = useRole();
+  const location = useLocation();
+
+  // Auto-close mobile drawer whenever route changes
+  useEffect(() => {
+    if (window.innerWidth <= 768) {
+      close();
+    }
+  }, [location.pathname, close]);
 
   const useSearch = showSearch ?? (!pageTitle && !pageIcon);
 
   return (
     <div className="dashboard-layout">
+      {!collapsed && (
+        <div
+          className="sidebar-mobile-backdrop"
+          onClick={close}
+          aria-hidden="true"
+        />
+      )}
       <Sidebar
         isCollapsed={collapsed}
         onMenuToggle={toggle}
@@ -46,6 +62,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           breadcrumb={pageBreadcrumb}
           actions={pageActions}
           showSearch={useSearch}
+          onMenuToggle={toggle}
         />
         <div
           className="dashboard-content"

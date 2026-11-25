@@ -1,4 +1,4 @@
-export type Role = 'student' | 'teacher' | 'admin';
+export type Role = 'student' | 'teacher' | 'admin' | 'parent';
 export type AccountStatus = 'pending' | 'active' | 'rejected';
 export type Year = 'FE' | 'SE' | 'TE' | 'BE';
 

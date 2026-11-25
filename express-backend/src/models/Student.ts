@@ -22,5 +22,7 @@ const studentSchema = new Schema<StudentDoc>({
   divisionRef: { type: Schema.Types.ObjectId, ref: 'Division', index: true },
 });
 
+studentSchema.index({ divisionRef: 1, rollNumber: 1, name: 1 });
+
 export const Student: Model<StudentDoc> =
   User.discriminator<StudentDoc>('student', studentSchema);

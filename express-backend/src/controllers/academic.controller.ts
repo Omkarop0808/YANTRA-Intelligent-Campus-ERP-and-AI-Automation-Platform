@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/async-handler';
 import * as academic from '../services/academic.service';
@@ -28,13 +29,13 @@ export const getDivisions = asyncHandler(async (req: Request, res: Response) => 
 
 export const getDivisionById = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  if (!id) throw BadRequest('Division id required');
+  if (!id || !Types.ObjectId.isValid(id)) throw BadRequest('Valid division id required');
   res.json({ division: await academic.findDivision(id) });
 });
 
 export const getDivisionStudents = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  if (!id) throw BadRequest('Division id required');
+  if (!id || !Types.ObjectId.isValid(id)) throw BadRequest('Valid division id required');
   res.json({ students: await academic.listStudentsInDivision(id) });
 });
 
@@ -47,4 +48,14 @@ export const getSubjects = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
   res.json({ subjects: await academic.listSubjects({ branch, year }) });
+});
+
+export const createDivision = asyncHandler(async (req: Request, res: Response) => {
+  const division = await academic.createDivision(req.body);
+  res.status(201).json({ division });
+});
+
+export const createSubject = asyncHandler(async (req: Request, res: Response) => {
+  const subject = await academic.createSubject(req.body);
+  res.status(201).json({ subject });
 });

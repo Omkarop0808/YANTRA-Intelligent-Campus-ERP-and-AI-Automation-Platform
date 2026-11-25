@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const flag = z.enum([
-  'late', 'blank', 'plagiarism_suspected', 'ai_generated_suspected', 'unreadable',
+  'late', 'blank', 'similarity_flagged', 'plagiarism_suspected', 'ai_generated_suspected', 'unreadable',
 ]);
 
 export const rubricCriterionSchema = z.object({

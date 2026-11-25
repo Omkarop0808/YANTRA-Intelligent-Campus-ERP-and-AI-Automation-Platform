@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Show HN: Nova – AI-agent for voice-control over daily apps",
+    "url": "https://novavoice.app",
+    "source": "hackernews",
+    "description": "Hey HN, Today I’d like to show what I’ve recently built with my 2 friends.<p>We’ve called it Nova.<p>The idea is to built all-purpose AI Voice Assistant, which is able to interact with mail,  to-do apps, messengers and socials, task trackers, apps like UberEats, Notion and some other daily apps.<p>How we decided to work on it: We’ve recently read YC Request for startups Summer25 and were inspired by the idea of AI Voice Assistant for Mail by YC partner Tyler Bosmeny.<p>What we’ve got: We’ve gone a bit further than Assistant for mail only and connected Gmail, Todoist, Google Calendar, and HackerNews(other integrations including X, Reddit, Whatsapp, UberEats are in progress).<p>Lots of things must be tested and fixed, but we already released the first version of our Voice Assistant for Web and we plan to build an IOS and Android apps.<p>You can try it here: <a href=\"https:&#x2F;&#x2F;novavoice.app\" rel=\"nofollow\">https:&#x2F;&#x2F;novavoice.app</a><p>You can read more about Nova and watch the demo video here: <a href=\"https:&#x2F;&#x2F;landing.novavoice.app&#x2F;\" rel=\"nofollow\">https:&#x2F;&#x2F;landing.novavoice.app&#x2F;</a><p>Appreciate your time and thoughts — curious to hear your reactions and feedback. Thanks!",
+    "popularity": 3,
+    "pushed_at": "2025-08-06T15:57:57Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  }
+]

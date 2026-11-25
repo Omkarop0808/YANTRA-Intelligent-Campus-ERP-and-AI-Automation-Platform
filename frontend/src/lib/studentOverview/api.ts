@@ -36,6 +36,7 @@ export interface StudentUpcomingAssignment {
   subjectLabel?: string;
   dueDate?: string;
   status: 'pending' | 'submitted' | 'graded' | 'resubmit_requested';
+  source?: string;
 }
 
 export interface StudentOverview {

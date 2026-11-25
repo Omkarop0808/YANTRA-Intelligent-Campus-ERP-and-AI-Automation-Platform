@@ -22,10 +22,13 @@ import { ProgressBar } from '../components/dashboard/ProgressBar';
 import { ScheduleTable } from '../components/dashboard/ScheduleTable';
 import { DeadlineList } from '../components/dashboard/DeadlineList';
 import { AlertBanner } from '../components/dashboard/AlertBanner';
+import { UploadNoticeCard } from '../components/dashboard/UploadNoticeCard';
 import {
   fetchStudentOverview, type StudentOverview, type StudentSubjectAttendance,
   type StudentTodayLecture, type StudentUpcomingAssignment,
 } from '../lib/studentOverview/api';
+import type { SavedPersonalDeadline } from '../lib/deadlines/api';
+import { useRole } from '../lib/useRole';
 import { ApiError } from '../lib/api';
 
 const AT_RISK_THRESHOLD = 75;
@@ -62,9 +65,34 @@ const formatDueLabel = (dueIso?: string): string => {
 };
 
 export const StudentDashboard: React.FC = () => {
+  const { role } = useRole();
   const [data, setData] = useState<StudentOverview | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const handleNoticeSaved = (saved: SavedPersonalDeadline) => {
+    const item: StudentUpcomingAssignment = {
+      resourceId: saved._id,
+      title: saved.title,
+      subjectLabel: saved.subject,
+      dueDate: saved.deadline,
+      status: 'pending',
+      source: saved.source || 'from notice',
+    };
+    setData((prev) => {
+      if (!prev) return prev;
+      const filtered = prev.upcomingAssignments.filter((a) => a.resourceId !== item.resourceId);
+      // Place the newly saved notice deadline at the top so it is visible immediately without reload
+      return {
+        ...prev,
+        upcomingAssignments: [item, ...filtered],
+        metrics: {
+          ...prev.metrics,
+          pendingCount: prev.metrics.pendingCount + 1,
+        },
+      };
+    });
+  };
 
   useEffect(() => {
     (async () => {
@@ -306,6 +334,8 @@ export const StudentDashboard: React.FC = () => {
             />
           )}
 
+          {role === 'student' && <UploadNoticeCard onSaved={handleNoticeSaved} />}
+
           <div className="card">
             <div className="card-header">
               <h2 className="card-title-lg" style={{ maxWidth: 160 }}>Upcoming Deadlines</h2>
@@ -329,12 +359,13 @@ export const StudentDashboard: React.FC = () => {
               </div>
             ) : (
               <DeadlineList
-                items={upcoming.slice(0, 5).map(a => ({
+                items={upcoming.slice(0, 8).map(a => ({
                   title: a.title,
-                  course: a.subjectLabel ?? '—',
+                  course: (a.subjectLabel ?? '—').replace(/\s*\(from notice\)\s*$/i, ''),
                   instructor: a.status === 'pending' ? 'Submission pending' : a.status,
                   date: formatDueLabel(a.dueDate),
                   isUrgent: !!(a.dueDate && new Date(a.dueDate).getTime() - Date.now() < 24 * 60 * 60 * 1000),
+                  badge: a.source || (a.subjectLabel?.includes('(from notice)') ? 'from notice' : undefined),
                 }))}
               />
             )}
