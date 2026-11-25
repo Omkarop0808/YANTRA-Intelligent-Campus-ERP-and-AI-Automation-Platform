@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Check, X, ChevronRight, UserCheck, SlidersHorizontal, FileDown } from 'lucide-react';
+import React, { useMemo, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Check, X, ChevronRight, UserCheck, SlidersHorizontal, FileDown, Loader2 } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { useAttendance } from '../lib/AttendanceContext';
 import { ApiError } from '../lib/api';
@@ -16,15 +16,59 @@ const FILTER_LABEL: Record<RosterFilter, string> = {
 
 export const AttendanceMark: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryLecId = searchParams.get('lectureId');
+
   const {
     lecture, roster, loading, localStatus, localRemarks,
     setLocalStatus, setLocalRemarks, setAllLocalStatus,
     saveAttendance, presentCount, absentCount, presentPct,
+    selectLecture, lectureId, lectures, error: contextError,
   } = useAttendance();
   const [error, setError] = React.useState<string | null>(null);
   const [filter, setFilter] = React.useState<RosterFilter>('all');
   const [filterOpen, setFilterOpen] = React.useState(false);
+  const [timedOut, setTimedOut] = React.useState(false);
   const filterRef = React.useRef<HTMLDivElement>(null);
+
+  // Fallback timer: if loading takes > 2.5s, cancel waiting and allow manual selection
+  useEffect(() => {
+    if (loading.roster && !lecture) {
+      const t = setTimeout(() => setTimedOut(true), 2500);
+      return () => clearTimeout(t);
+    }
+    setTimedOut(false);
+  }, [loading.roster, lecture]);
+
+  // Sync query parameter with context lecture state
+  useEffect(() => {
+    if (queryLecId && queryLecId !== lectureId) {
+      selectLecture(queryLecId);
+    } else if (!queryLecId && lectureId) {
+      setSearchParams({ lectureId }, { replace: true });
+    } else if (!queryLecId && !lectureId && lectures.length > 0) {
+      const fallbackLec = lectures.find(l => l.status !== 'completed' && l.status !== 'cancelled') || lectures[0];
+      if (fallbackLec) {
+        selectLecture(fallbackLec._id);
+        setSearchParams({ lectureId: fallbackLec._id }, { replace: true });
+      }
+    }
+  }, [queryLecId, lectureId, lectures, selectLecture, setSearchParams]);
+
+  // Auto-recover if queryLecId is invalid or 404
+  useEffect(() => {
+    if (contextError && !lecture && queryLecId) {
+      if (lectures.length > 0) {
+        const nextLec = lectures.find(l => l.status !== 'completed' && l.status !== 'cancelled') || lectures[0];
+        if (nextLec) {
+          selectLecture(nextLec._id);
+          setSearchParams({ lectureId: nextLec._id }, { replace: true });
+          return;
+        }
+      }
+      setSearchParams({}, { replace: true });
+    }
+  }, [contextError, lecture, queryLecId, lectures, selectLecture, setSearchParams]);
 
   React.useEffect(() => {
     if (!filterOpen) return;
@@ -45,7 +89,8 @@ export const AttendanceMark: React.FC = () => {
 
   const dashLen = 339.29;
 
-  if (!lecture && !loading.roster) {
+  // Show loading spinner while actively fetching roster or lecture
+  if (loading.roster && !lecture && !contextError && !timedOut) {
     return (
       <AppLayout
         background="#F8FAFC"
@@ -53,12 +98,67 @@ export const AttendanceMark: React.FC = () => {
         pageTitle="Mark Attendance"
         pageBreadcrumb={<button onClick={() => navigate('/attendance')}>← Back to Overview</button>}
       >
-        <div className="card" style={{ textAlign: 'center', padding: '4rem 2rem', maxWidth: 480, margin: '4rem auto' }}>
-          <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>No lecture selected</h3>
+        <div className="card" style={{ textAlign: 'center', padding: '3.5rem 2rem', maxWidth: 480, margin: '3.5rem auto' }}>
+          <div style={{ display: 'inline-flex', justifyContent: 'center', marginBottom: '1rem' }}>
+            <Loader2 className="animate-spin" size={28} color="var(--primary)" />
+          </div>
+          <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>Loading lecture roster...</h3>
           <p style={{ color: '#64748B', margin: 0 }}>
-            Pick a lecture from the overview page to start marking attendance.
+            Fetching students and saved records for this session.
           </p>
-          <button className="btn btn-primary" style={{ marginTop: '1.25rem' }} onClick={() => navigate('/attendance')}>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!lecture) {
+    return (
+      <AppLayout
+        background="#F8FAFC"
+        pageIcon={<UserCheck size={18} />}
+        pageTitle="Mark Attendance"
+        pageBreadcrumb={<button onClick={() => navigate('/attendance')}>← Back to Overview</button>}
+      >
+        <div className="card" style={{ textAlign: 'center', padding: '3rem 2rem', maxWidth: 520, margin: '3rem auto' }}>
+          {contextError && (
+            <div style={{ padding: '0.75rem 1rem', backgroundColor: '#FEE2E2', color: '#B91C1C', borderRadius: '0.5rem', marginBottom: '1.25rem', fontSize: '0.875rem' }}>
+              {contextError}
+            </div>
+          )}
+          <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>No lecture active</h3>
+          <p style={{ color: '#64748B', margin: '0 0 1.5rem' }}>
+            Pick an available lecture below or return to the overview page.
+          </p>
+          {lectures.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxWidth: 380, margin: '0 auto 1.5rem', textAlign: 'left' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>
+                Available Lectures Today:
+              </span>
+              {lectures.map(l => {
+                const subjName = typeof l.subject === 'object' && l.subject ? l.subject.name : 'Lecture';
+                const subjCode = typeof l.subject === 'object' && l.subject ? l.subject.code : '';
+                return (
+                  <button
+                    key={l._id}
+                    className="btn btn-secondary"
+                    style={{ justifyContent: 'space-between', padding: '0.75rem 1rem' }}
+                    onClick={() => {
+                      selectLecture(l._id);
+                      setSearchParams({ lectureId: l._id });
+                    }}
+                  >
+                    <span><strong>{subjCode}</strong> · {subjName} ({l.startTime} - {l.endTime})</span>
+                    <ChevronRight size={14} />
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <p style={{ color: '#94A3B8', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+              No lectures scheduled for today in this division.
+            </p>
+          )}
+          <button className="btn btn-primary" onClick={() => navigate('/attendance')}>
             Go to Overview
           </button>
         </div>

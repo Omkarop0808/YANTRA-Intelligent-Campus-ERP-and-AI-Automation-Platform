@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TrendingUp, UserCheck, FileDown } from 'lucide-react';
+import { TrendingUp, UserCheck, FileDown, AlertCircle, RefreshCw } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { useAttendance } from '../lib/AttendanceContext';
 import {
   fetchDivisionStats, fetchDivisionSubjectAverages, downloadDivisionReportPdf,
+  fetchFocusList, type FocusStudentItem,
 } from '../lib/erp/api';
 import type { DivisionStatRow, SubjectAverageRow } from '../lib/erp/types';
 import { ApiError } from '../lib/api';
@@ -14,16 +15,48 @@ export const AttendanceAnalytics: React.FC = () => {
   const { divisions, divisionId, selectDivision } = useAttendance();
   const [stats, setStats] = useState<DivisionStatRow[]>([]);
   const [subjectAvgs, setSubjectAvgs] = useState<SubjectAverageRow[]>([]);
+  const [focusList, setFocusList] = useState<FocusStudentItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Automatically select the first division once loaded if none is active
   useEffect(() => {
-    if (!divisionId) { setStats([]); setSubjectAvgs([]); return; }
+    if (!divisionId && divisions.length > 0 && divisions[0]?._id) {
+      selectDivision(divisions[0]._id);
+    }
+  }, [divisions, divisionId, selectDivision]);
+
+  useEffect(() => {
+    if (!divisionId || divisionId === 'undefined') {
+      setStats([]);
+      setSubjectAvgs([]);
+      setFocusList([]);
+      setError(null);
+      return;
+    }
     let cancelled = false;
+    setError(null);
     setLoading(true);
-    Promise.all([fetchDivisionStats(divisionId), fetchDivisionSubjectAverages(divisionId)])
-      .then(([s, a]) => { if (!cancelled) { setStats(s); setSubjectAvgs(a); } })
-      .catch(e => { if (!cancelled) setError(e instanceof ApiError ? e.message : 'Failed to load stats'); })
+    Promise.all([
+      fetchDivisionStats(divisionId),
+      fetchDivisionSubjectAverages(divisionId),
+      fetchFocusList(divisionId).catch(() => []),
+    ])
+      .then(([s, a, f]) => {
+        if (!cancelled) {
+          setStats(s || []);
+          setSubjectAvgs(a || []);
+          setFocusList(f || []);
+          setError(null);
+        }
+      })
+      .catch(e => {
+        if (!cancelled) {
+          const msg = e instanceof ApiError ? e.message : (e instanceof Error ? e.message : 'Failed to load stats');
+          console.warn('Attendance analytics load notice:', msg);
+          setError(msg);
+        }
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [divisionId]);
@@ -81,7 +114,30 @@ export const AttendanceAnalytics: React.FC = () => {
         </>
       }
     >
-      {error && <div className="status-pill danger" style={{ marginBottom: '1rem' }}>{error}</div>}
+      {error && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 1rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '0.5rem', marginBottom: '1rem', color: '#991B1B', fontSize: '0.825rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <AlertCircle size={16} color="#DC2626" />
+            <span>{error}</span>
+          </div>
+          <button
+            className="btn btn-secondary btn-sm"
+            style={{ padding: '0.2rem 0.6rem', fontSize: '0.75rem', borderColor: '#FCA5A5' }}
+            onClick={() => {
+              if (divisionId) {
+                setError(null);
+                setLoading(true);
+                Promise.all([fetchDivisionStats(divisionId), fetchDivisionSubjectAverages(divisionId)])
+                  .then(([s, a]) => { setStats(s || []); setSubjectAvgs(a || []); setError(null); })
+                  .catch(e => setError(e instanceof ApiError ? e.message : 'Failed to load stats'))
+                  .finally(() => setLoading(false));
+              }
+            }}
+          >
+            <RefreshCw size={12} /> Retry
+          </button>
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '32% 65.5%', gap: '2.5%', alignItems: 'flex-start' }}>
         {/* Left */}
@@ -219,6 +275,84 @@ export const AttendanceAnalytics: React.FC = () => {
                 </table>
               </div>
             )}
+          </div>
+
+          {/* Early Warning Focus List Card */}
+          <div className="card">
+            <div className="card-header">
+              <div>
+                <h3>Early Warning Academic Focus List</h3>
+                <p style={{ margin: 0, fontSize: '0.785rem', color: '#64748B' }}>
+                  Rule-based risk score (attendance deficit, failed quizzes, missing assignments)
+                </p>
+              </div>
+              <span className="status-pill warning">{focusList.filter(f => f.riskTier !== 'LOW').length} at risk</span>
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Risk Score</th>
+                    <th>Risk Tier</th>
+                    <th>Deficit / Recovery</th>
+                    <th>Warning Triggers</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {focusList.length === 0 && (
+                    <tr><td colSpan={5} style={{ padding: '1.5rem', textAlign: 'center', color: '#64748B' }}>No student risk indicators found.</td></tr>
+                  )}
+                  {focusList.map(item => {
+                    const badgeBg = item.riskTier === 'HIGH' ? '#FEE2E2' : item.riskTier === 'MEDIUM' ? '#FEF3C7' : '#DCFCE7';
+                    const badgeText = item.riskTier === 'HIGH' ? '#B91C1C' : item.riskTier === 'MEDIUM' ? '#B45309' : '#15803D';
+                    return (
+                      <tr key={item.student.id}>
+                        <td>
+                          <span className="strong">{item.student.name}</span>
+                          <div style={{ fontSize: '0.75rem', color: '#64748B' }}>{item.student.rollNumber || item.student.email}</div>
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{item.riskScore}</span>
+                            <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>/100</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span style={{
+                            padding: '0.2rem 0.55rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            backgroundColor: badgeBg,
+                            color: badgeText,
+                          }}>
+                            {item.riskTier}
+                          </span>
+                        </td>
+                        <td>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>
+                            {item.factors.attendance.isDefaulter
+                              ? `Needs ${item.factors.attendance.classesNeeded} classes (${item.factors.attendance.percentage}%)`
+                              : `${item.factors.attendance.percentage}% (Safe)`}
+                          </span>
+                        </td>
+                        <td>
+                          <div style={{ fontSize: '0.785rem', color: '#475569' }}>
+                            {item.reasons.slice(0, 2).map((r, i) => (
+                              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                <span style={{ color: '#EF4444' }}>•</span> {r}
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

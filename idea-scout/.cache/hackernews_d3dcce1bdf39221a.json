@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Show HN: Lightdrift / Image search for AI agents through API and MCP",
+    "url": "https://lightdrift.ai",
+    "source": "hackernews",
+    "description": "Greetings HN, I&#x27;m Jackson, the founder of Lightdrift. It&#x27;s an image search API and MCP that lets agents retrieve real images, along with natural language descriptions, metadata, provenance, and license conditions.<p>I built this because I kept having the same problem and it was pissing me off.<p>About a year ago, I was vibe coding on edibles. I decided to build a pipeline that generated educational, short form videos about marine biology, because I was watching Planet Earth but I was being distracted by reels, and I needed comfort. I realized video generation struggled with less familiar animals, like the Mola Mola, which is my favorite marine animal because idk there is just something about it that is relatable. Naturally, I decided I would just ground the videos by retrieving images automatically. I realized the existing APIs for this had meh developer experiences, and instantly gave up lol.<p>Later, I was building an AI education platform. I wanted lessons to include relevant visuals, but generated images weren&#x27;t consistently reliable for actual species, people, places, etc. Again, I needed image retrieval, and I made a shitty aggregration of APIs and wrappers that ended up becoming the entire project.<p>I tried Unsplash, Pexels, Brave search, Exa, my own wrappers around Wikimedia Commons. Each helped with part of the problem. Stock libraries worked for broad subjects but didn&#x27;t consistenly cover the specific things my applications needed.  Web search helped locate material, but I still had to resolve the image files, check their sources and usage conditions, and turn inconsistent results into something the application could consume. I wrapped Commons which again left me handling search quality and normalization myself.<p>The goal of Lightdrift is to bring that tedious ass work into one place. We source, caption, index, and host the images. An app&#x2F;agent can search in natural language and receive image giles with the context needed to select and use them. The corpus currently contains over two million diverse images, pretty much entirely CC and public domain material.<p>The license info describes the source&#x27;s stated permissions&#x2F;conditions. It isn&#x27;t a blanket guarantee that every image can be used, but it always gives the information you&#x2F;your agent need to decide.<p>I think (know) this could be applied to education tools, presentation builders, and app builders that need relevant imagery without maintaining a separate image pipeline.<p>I&#x27;m currently looking for design partners (but also it&#x27;s super easy to set up so we don&#x27;t have to make it official lol). If your application needs particular subjects that we don&#x27;t cover well, I will work with you to source and index it at no additional cost.<p>Does image retrieval currently break down in what you&#x27;re building?<p>Product: <a href=\"https:&#x2F;&#x2F;lightdrift.ai\" rel=\"nofollow\">https:&#x2F;&#x2F;lightdrift.ai</a>\nDocs: <a href=\"https:&#x2F;&#x2F;docs.lightdrift.ai\" rel=\"nofollow\">https:&#x2F;&#x2F;docs.lightdrift.ai</a>",
+    "popularity": 1,
+    "pushed_at": "2026-09-22T18:50:54Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  },
+  {
+    "title": "Show HN: Gortex – MCP server for cross-repo code intelligence",
+    "url": "https://github.com/zzet/gortex",
+    "source": "hackernews",
+    "description": "The core idea doesn&#x27;t seem new after the hype of a few similar tools.\nI wanted to have a solution for a smart search between repositories, contract recognition (across repositories&#x2F;business flows), where they&#x27;re broken, and where a bug sits in multi-step user interaction, considering the product is built in different languages, which are in different repositories. It evolved into the daemon that indexes the code and, paired with a coding agent via MCP protocol (in a mono-repo or multi-repository mode), provides real-time code indexing and many MCP tools (47 at the moment) for cases like getting exact function code (instead of reading whole file), query code structure, trace call chains across repos, detect dead code, semantic search across the code.<p>VS Code (10.7K files) indexed in ~1 minute, Linux kernel (70K files) in ~3 minutes<p>Licensed under PolyForm Small Business — free for personal use, open source projects, small businesses, education, and healthcare.<p>I knew a few similar projects were launched in the middle of Gortex&#x27;s development, but after recent testing, I found it worth sharing the project with others and listening to their feedback.",
+    "popularity": 3,
+    "pushed_at": "2026-04-21T11:53:48Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  },
+  {
+    "title": "Show HN: An MCP server that lets AI agents request disability insurance quotes",
+    "url": "https://github.com/seaworthy-io/seaworthy-mcp",
+    "source": "hackernews",
+    "description": "Hi HN. I own an online insurance agency, a painfully old-school industry. I am not a developer. I vibe-coded it all in Claude Code, then reviewed and tested before anything shipped. Which is part of the story I guess, that a small firm with curious and reasonably capable people can now operate agent infrastructure that would have required a contractor two years ago.<p>I&#x27;m trying this because a growing share of our prospects start by asking their AI of choice what coverage to buy and who to get it from. Assistants can read my site, so like everyone else I&#x27;m trying to get recommendations via content. But the next natural step is agents actually taking actions on sites rather than just reading them, so I created seven tools, six read-only (a verified-facts knowledge base, carrier comparison, specialty and education guides, benefit-cap math, rider definitions) and one action, &quot;quote request,&quot; which writes a lead straight into our CRM through the same Salesforce web-to-lead path that our web form uses. Then it switches back to the &quot;normal&quot; process and a licensed broker follows up through traditional means. This is the best use case I could figure out at this point, but expect to find others as the space matures. To my knowledge it is the first agent-callable quote action in my corner of insurance.<p>I had originally built it with an OAuth flow, but there was friction that kept killing the test interactions so I made it open, no auth. Unless there is something I&#x27;m missing the worst case scenario is junk leads and not a data leak since the read tools only contain published information and the quote request collects normal lead stuff like name, DOB, etc. According to Claude, spam &quot;gets handled in layers with strict input validation including a DNS-over-HTTPS check that the email domain can receive mail, per-IP rate limiting in Workers KV, and short-window duplicate suppression.&quot; Either way every agent-originated lead is tagged in my CRM so junk is easily filterable. The rate limit should in theory block you if you hammer it. But this is the sort of stuff I wouldn&#x27;t mind some people playing around with since I&#x27;m learning on the fly and an experienced developer could probably find some holes.<p>My setup is a single Cloudflare Worker (Streamable HTTP transport), KV for rate limiting and knowledge, knowledge compiled at deploy from the same source of truth that feeds our site chatbot, so the MCP and the site regenerate from the same file.<p>Endpoint: <a href=\"https:&#x2F;&#x2F;mcp.seaworthy.io&#x2F;mcp\" rel=\"nofollow\">https:&#x2F;&#x2F;mcp.seaworthy.io&#x2F;mcp</a>\nHuman-readable reference: <a href=\"https:&#x2F;&#x2F;seaworthy.io&#x2F;for-ai-agents&#x2F;\" rel=\"nofollow\">https:&#x2F;&#x2F;seaworthy.io&#x2F;for-ai-agents&#x2F;</a><p>The honest open question is whether or not this will ever accomplish anything. I have not yet received a lead through these means, and do not expect to for some time yet, but I do believe that rather than people asking agents where to get quotes, they will eventually just ask the agent to get the quotes on their behalf (and then eventually to just fully set up the coverage), and I want to be the first one in my niche who has the capability. Happy to answer questions, and would be open to input if anyone has anything to share.",
+    "popularity": 2,
+    "pushed_at": "2026-07-10T21:56:00Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  }
+]

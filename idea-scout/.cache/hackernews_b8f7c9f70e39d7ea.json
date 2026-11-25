@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Tell YC (Justin Kan): possibly interesting?",
+    "url": "https://news.ycombinator.com/item?id=3846496",
+    "source": "hackernews",
+    "description": "Justin, I was digging around for something else and stumbled on some\nsites/companies in roughly similar market to your new \"Exec\" company.\nIf you don't already know about them, I figured you'd want to know.\nYou probably get tons of email, and hence make your address difficult\nto find, but by posting these here, others can add to it.<p>http://www.careermums.com.au/<p>http://www.springwise.com/marketing_advertising/job_site_for_working_parents/<p>http://www.beyondtheschoolrun.com/<p>http://www.springwise.com/marketing_advertising/online-portal-parents-focuses-work-opportunities-school-hours/<p>http://www.knowhowmart.com/<p>http://www.springwise.com/marketing_advertising/online-tool-connects-businesses-experts-one-off-advice/",
+    "popularity": 1,
+    "pushed_at": "2012-04-16T08:25:34Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  },
+  {
+    "title": "Show HN: Schezy – AI-Powered School Management System for Modern Education",
+    "url": "https://www.schezy.com/",
+    "source": "hackernews",
+    "description": "I built Schezy, a comprehensive, AI-powered school management system designed to streamline academic and administrative operations for schools and educational institutions.<p>Key features include:<p>Student and staff management<p>Attendance tracking and automated reporting<p>Online fee management and receipts<p>Timetable scheduling<p>Parent-teacher communication portal<p>AI-assisted analytics for performance tracking<p>Many schools still rely on outdated systems or manual processes. With Schezy, we aim to bring a user-friendly, affordable, and modern solution to the education sector.<p>I’d love your feedback — especially from educators, developers, or anyone with experience in edtech.<p>Try it out at: <a href=\"https:&#x2F;&#x2F;schezy.com\" rel=\"nofollow\">https:&#x2F;&#x2F;schezy.com</a>",
+    "popularity": 3,
+    "pushed_at": "2025-05-12T04:27:02Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  },
+  {
+    "title": "Tell HN: How USA school closure seems to be working out",
+    "url": "https://news.ycombinator.com/item?id=22512265",
+    "source": "hackernews",
+    "description": "I&#x27;m in Northshore school district (Seattle Area) and our school district is the first in the USA to be closed by the CoronaVirus.<p>The district has actually moved pretty fast on this.  They set up an emergency &quot;online teaching&quot; teacher training day tues, e-learning resources, and upon closure on thursday they had the elearning setup for students to try out.  You can see the district emergency e-learning portal page here: https:&#x2F;&#x2F;www.nsd.org&#x2F;northshorelearns<p>My 2 kids classes will be taught using Google Classrooms starting Monday, and the last two days were for &quot;testing&quot; the system.  The school choose Google Classrooms I think because the students already had google apps for education accounts.<p>Overall, Google Classrooms is better than nothing, but honestly not much.  It&#x27;s basically a Teacher driven CRM system with ui complexity like all google web tools, and some integration with Google Docs.   I think this might be fine for middle-school or higher, but they workflows are a bit convoluted, and I can see small kids and computer illiterate parents having serious problems navigating.<p>The biggest problem though, is that it&#x27;s all self-directed learning.  Students need to proactively seek out their assignments and course materials and have the focus to read&#x2F;understand it all without any explanation by a teacher.  It&#x27;s &quot;okay&quot; in my case because I can spend the time to hover over them to make sure the work gets done and the content gets read (otherwise it&#x27;s just skimmed over).  Students unable to self learn and parents unable to micromanage their learning are going to be severely hurt by online learning like this.   Also, me micromanaging the kids took a considerable chunk of the day, as I need to check up on them every 10 minutes or so, or they have questions (aprox 5hrs&#x2F;day).<p>I do think the school district made the right decision to close.  Kids are at lowest risk of serious infection but school staff trend older and are at highest risk.",
+    "popularity": 147,
+    "pushed_at": "2020-03-07T16:12:07Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  }
+]

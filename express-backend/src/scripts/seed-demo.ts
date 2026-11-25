@@ -18,6 +18,7 @@ import { Lecture } from '../models/Lecture';
 import { Attendance, type AttendanceStatus } from '../models/Attendance';
 import { Student, type StudentDoc } from '../models/Student';
 import { Teacher, type TeacherDoc } from '../models/Teacher';
+import { Parent } from '../models/Parent';
 import { User } from '../models/User';
 import type { LectureDoc } from '../models/Lecture';
 
@@ -404,6 +405,26 @@ const main = async () => {
   const lecturesB = await materialiseLectures(teB, 14, 7);
   const attendanceCountA = await seedAttendance(lecturesA, studentsA);
   const attendanceCountB = await seedAttendance(lecturesB, studentsB);
+
+  // Seed demo parent linked to Aarav Sharma (student A)
+  const PARENT_PASSWORD = 'Parent123!';
+  const parentEmail = 'parent.sharma@university.edu';
+  let parent = await Parent.findOne({ email: parentEmail });
+  if (!parent) {
+    const hash = await hashPassword(PARENT_PASSWORD);
+    parent = await Parent.create({
+      email: parentEmail,
+      passwordHash: hash,
+      name: 'Rajesh Sharma',
+      role: 'parent',
+      status: 'active',
+      children: [studentsA[0]!._id],
+      phone: '+91 98765 43210',
+    });
+  } else {
+    parent.children = [studentsA[0]!._id];
+    await parent.save();
+  }
 
   logger.info('Seed complete', {
     branch: branch.code,

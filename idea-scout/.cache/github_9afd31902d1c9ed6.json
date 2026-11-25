@@ -1,0 +1,63 @@
+[
+  {
+    "title": "Moodle-MCP",
+    "full_name": "Faixiang/Moodle-MCP",
+    "url": "https://github.com/Faixiang/Moodle-MCP",
+    "source": "github",
+    "description": "Zero-dependency MCP server for the Moodle Web Service API — read-only course, assignment, quiz, deadline and file tools for Claude, Cursor and any MCP client. Actively maintained · v1.4.0 · 10 tools · docs in 10 languages.",
+    "popularity": 197,
+    "pushed_at": "2026-11-01T17:47:58Z",
+    "archived": false,
+    "topics": [
+      "claude",
+      "education",
+      "llm",
+      "mcp",
+      "model-context-protocol",
+      "moodle",
+      "python"
+    ],
+    "readme_snippet": "<div align=\"center\">\n\n<img src=\"docs/banner.svg\" alt=\"Moodle-MCP\" width=\"100%\">\n\n# Moodle-MCP\n\n### Your Moodle, as tools an AI agent can actually use\n\nRead assignments, deadlines and course files straight out of the Moodle Web Service API — no browser, no scraping, no clicking.\n\n<a href=\"LICENSE\"><img src=\"https://img.shields.io/badge/license-MIT-yellow.svg\" alt=\"MIT License\"></a>\n<img src=\"https://img.shields.io/badge/python-3.8%2B-3772FF?logo=python&logoColor=white\" alt=\"Python 3.8+\">\n<img src=\"https://img.shields.io/badge/MCP-2024--11--05-8A2BE2\" alt=\"MCP 2024-11-05\">\n<img src=\"https://img.shields.io/badge/Moodle-3.x%20%7C%204.x-F98012?logo=moodle&logoColor=white\" alt=\"Moodle 3.x / 4.x\">\n<img src=\"https://img.shields.io/badge/dependencies-0-success\" alt=\"Zero dependencies\">\n<a href=\"https://github.com/Faixiang/Moodle-MCP/stargazers\"><img src=\"https://img.shields.io/github/stars/Faixiang/Moodle-MCP?style=social\" alt=\"GitHub stars\"></a>\n<img src=\"https://img.shields.io/badge/version-1.4.0-1f6feb\" alt=\"Version 1.4.0\">\n<img src=\"https://img.shields.io/badge/status-actively%20maintained-brightgreen\" alt=\"Actively maintained\">\n\n<p>\n<b>English</b> ·\n<a href=\"README.zh-CN.md\">简体中文</a> ·\n<a href=\"README.zh-TW.md\">繁體中文</a> ·\n<a href=\"README.ja.md\">日本語</a> ·\n<a href=\"README.ko.md\">한국어</a> ·\n<a href=\"README.es.md\">Español</a> ·\n<a href=\"README.fr.md\">Français</a> ·\n<a href=\"README.de.md\">Deutsch</a> ·\n<a href=\"README.pt-BR.md\">Português</a> ·\n<a href=\"README.ru.md\">Русский</a>\n</p>\n\n<"
+  },
+  {
+    "title": "ai-upskill-playbook",
+    "full_name": "pete-builds/ai-upskill-playbook",
+    "url": "https://github.com/pete-builds/ai-upskill-playbook",
+    "source": "github",
+    "description": "The AI application stack for IT professionals. A map of the tools and technologies worth learning in 2026.",
+    "popularity": 10,
+    "pushed_at": "2026-10-17T02:04:07Z",
+    "archived": false,
+    "topics": [
+      "ai",
+      "career-development",
+      "claude",
+      "education",
+      "mcp"
+    ],
+    "readme_snippet": "# AI Upskill Playbook\n\n*By [pete-builds](https://github.com/pete-builds) · Last updated October 2026 · [What changed](#changelog)*\n\n**How I learned to build and run AI systems on my own hardware, in the order I would do it again.**\n\nI came at this as a sysadmin, not a software engineer. Over eight months I went from a Claude subscription and a spare PC to a home server running dozens of containers, a set of MCP servers I built myself, around sixty agent skills, and CI gates on every repo. This playbook is that path with the detours cut out.\n\nIt is a map, not a tutorial. Each section says what to set up, why, and the mistake that taught me the lesson. Every \"What bit me\" note below happened in my own stack.\n\n## How to use this\n\n| Part | You end up with | Roughly |\n|---|---|---|\n| [Beginning](#part-1-beginning) | Claude Code set up properly, and a first homelab running Pi-hole | Month 1 |\n| [Middle](#part-2-middle) | Agents, your own MCP servers, a self-hosted AI stack, and a chatbot you can put in public | Months 2 to 5 |\n| [End](#part-3-end) | A system that tests, patches, deploys, and watches itself | Month 6 on |\n\nYou can stop after any part and have something useful. Each section ends with **Done when**, a test you can actually run.\n\n**Not covered:** model training, ML theory, fine-tuning, production RAG at scale. This is the integration and operations side.\n\n```\nYou (laptop)\n │\n ├── Claude Code ───────── agents, skills, hooks, MCP clients      Beginning + Middle\n │\n └── H"
+  },
+  {
+    "title": "studyhub-local",
+    "full_name": "langming58-hash/studyhub-local",
+    "url": "https://github.com/langming58-hash/studyhub-local",
+    "source": "github",
+    "description": "Local-first course material hub with source-grounded AI study tools.",
+    "popularity": 10,
+    "pushed_at": "2026-11-07T10:51:11Z",
+    "archived": false,
+    "topics": [
+      "ai",
+      "canvas-lms",
+      "education",
+      "local-first",
+      "mcp",
+      "openai",
+      "privacy",
+      "python",
+      "student-tools",
+      "study-tools"
+    ],
+    "readme_snippet": "# StudyHub Local\n\n[![Release](https://img.shields.io/badge/release-v0.3.0--beta.1-orange)](https://github.com/langming58-hash/studyhub-local/releases/tag/v0.3.0-beta.1)\n[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)\n[![CI](https://github.com/langming58-hash/studyhub-local/actions/workflows/ci.yml/badge.svg)](https://github.com/langming58-hash/studyhub-local/actions/workflows/ci.yml)\n![Local-first](https://img.shields.io/badge/localhost--only-local--first-blue)\n\n[简体中文](README.zh-CN.md)\n\n## Download\n\n**[Download for macOS](https://github.com/langming58-hash/studyhub-local/releases/tag/v0.3.0-beta.1)** · [Latest releases](https://github.com/langming58-hash/studyhub-local/releases) · [Source code](https://github.com/langming58-hash/studyhub-local)\n\n| Version | Status | Mac | Minimum macOS | Signing |\n| --- | --- | --- | --- | --- |\n| v0.3.0-beta.1 | Prerelease | Apple Silicon only | macOS 13 Ventura | Unsigned beta, not notarized |\n\nThe downloaded app includes its local backend. A normal user does not need Git, Node.js, Python, Rust, npm, or Terminal.\n\n### Install on macOS\n\n1. Open the GitHub release and download `StudyHub-Local-v0.3.0-beta.1-macos-arm64.dmg`.\n2. Open the DMG.\n3. Drag **StudyHub Local** to **Applications**.\n4. Try to open **StudyHub Local** normally.\n5. Because this beta is not Developer ID signed or notarized, macOS may block the first launch. Open **System Settings -> Privacy & Security**, find the StudyHub Local message, and cho"
+  }
+]

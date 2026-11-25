@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   UserCheck, Search, ChevronRight, ShieldCheck, ShieldAlert, X, FileDown, Bell,
+  AlertCircle, RefreshCw,
 } from 'lucide-react';
 import { SendNotificationModal, type NotificationRecipient } from '../components/notifications/SendNotificationModal';
 import { AppLayout } from '../components/layout/AppLayout';
@@ -72,9 +73,23 @@ export const AttendanceStudents: React.FC = () => {
     (query.trim() ? 1 : 0) + (bucket !== 'all' ? 1 : 0) + (elig !== 'all' ? 1 : 0)
     + (subjectId !== 'all' ? 1 : 0);
 
+  // Automatically select the first division once loaded if none is active
   useEffect(() => {
-    if (!divisionId) { setStats([]); setStudents([]); setEligibility([]); return; }
+    if (!divisionId && divisions.length > 0 && divisions[0]?._id) {
+      selectDivision(divisions[0]._id);
+    }
+  }, [divisions, divisionId, selectDivision]);
+
+  useEffect(() => {
+    if (!divisionId || divisionId === 'undefined') {
+      setStats([]);
+      setStudents([]);
+      setEligibility([]);
+      setError(null);
+      return;
+    }
     let cancelled = false;
+    setError(null);
     setLoading(true);
     Promise.all([
       fetchDivisionStats(divisionId),
@@ -82,9 +97,20 @@ export const AttendanceStudents: React.FC = () => {
       fetchDivisionEligibility(divisionId),
     ])
       .then(([s, st, el]) => {
-        if (!cancelled) { setStats(s); setStudents(st); setEligibility(el); }
+        if (!cancelled) {
+          setStats(s || []);
+          setStudents(st || []);
+          setEligibility(el || []);
+          setError(null);
+        }
       })
-      .catch(e => { if (!cancelled) setError(e instanceof ApiError ? e.message : 'Failed to load students'); })
+      .catch(e => {
+        if (!cancelled) {
+          const msg = e instanceof ApiError ? e.message : (e instanceof Error ? e.message : 'Failed to load students');
+          console.warn('Attendance students load notice:', msg);
+          setError(msg);
+        }
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [divisionId]);
@@ -217,7 +243,39 @@ export const AttendanceStudents: React.FC = () => {
         </>
       }
     >
-      {error && <div className="status-pill danger" style={{ marginBottom: '1rem' }}>{error}</div>}
+      {error && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 1rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '0.5rem', marginBottom: '1rem', color: '#991B1B', fontSize: '0.825rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <AlertCircle size={16} color="#DC2626" />
+            <span>{error}</span>
+          </div>
+          <button
+            className="btn btn-secondary btn-sm"
+            style={{ padding: '0.2rem 0.6rem', fontSize: '0.75rem', borderColor: '#FCA5A5' }}
+            onClick={() => {
+              if (divisionId) {
+                setError(null);
+                setLoading(true);
+                Promise.all([
+                  fetchDivisionStats(divisionId),
+                  fetchDivisionStudents(divisionId),
+                  fetchDivisionEligibility(divisionId),
+                ])
+                  .then(([s, st, el]) => {
+                    setStats(s || []);
+                    setStudents(st || []);
+                    setEligibility(el || []);
+                    setError(null);
+                  })
+                  .catch(e => setError(e instanceof ApiError ? e.message : 'Failed to load students'))
+                  .finally(() => setLoading(false));
+              }
+            }}
+          >
+            <RefreshCw size={12} /> Retry
+          </button>
+        </div>
+      )}
 
       <div className="card">
         <div className="card-header" style={{ marginBottom: '0.85rem' }}>

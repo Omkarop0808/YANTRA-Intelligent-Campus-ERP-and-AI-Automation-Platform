@@ -11,7 +11,7 @@ from fastapi import Depends, Request
 from app.core.config import get_settings
 from app.core.errors import forbidden, unauthorized
 
-Role = Literal["student", "teacher", "admin"]
+Role = Literal["student", "teacher", "admin", "parent"]
 Status = Literal["pending", "active", "rejected"]
 
 
@@ -35,12 +35,18 @@ def _extract_bearer(request: Request) -> str:
 def require_auth(request: Request) -> AuthPrincipal:
     """FastAPI dependency: decode + verify the JWT, return the principal."""
     settings = get_settings()
-    if not settings.jwt_secret:
-        raise unauthorized("JWT verification not configured on this service")
-
     token = _extract_bearer(request)
+
     try:
-        payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
+        if settings.jwt_algorithm == "RS256":
+            pub_key = settings.get_jwt_public_key()
+            if not pub_key:
+                raise unauthorized("RS256 public key not found")
+            payload = jwt.decode(token, pub_key, algorithms=["RS256"])
+        else:
+            if not settings.jwt_secret:
+                raise unauthorized("JWT verification not configured on this service")
+            payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
     except jwt.ExpiredSignatureError as e:
         raise unauthorized("Token expired") from e
     except jwt.InvalidTokenError as e:

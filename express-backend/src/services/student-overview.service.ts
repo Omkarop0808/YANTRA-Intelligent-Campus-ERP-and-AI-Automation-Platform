@@ -18,7 +18,8 @@ import { Quiz } from '../models/Quiz';
 import { QuizAttempt } from '../models/QuizAttempt';
 import { Resource } from '../models/Resource';
 import { Submission } from '../models/Submission';
-import { studentSubjectAttendance } from './attendance.service';
+import { PersonalDeadline } from '../models/PersonalDeadline';
+import { studentSubjectAttendance, getStudentRecoveryPlan } from './attendance.service';
 
 const EMPTY_OVERVIEW = (name = ''): StudentOverview => ({
   greeting: { name },
@@ -78,6 +79,7 @@ export interface StudentUpcomingAssignment {
   subjectLabel?: string;
   dueDate?: string;
   status: 'pending' | 'submitted' | 'graded' | 'resubmit_requested';
+  source?: string;
 }
 
 export interface StudentOverview {
@@ -96,6 +98,7 @@ export interface StudentOverview {
     pendingCount: number;
   };
   attendance: StudentSubjectAttendance[];
+  recoveryPlan?: any[];
   todayLectures: StudentTodayLecture[];
   upcomingAssignments: StudentUpcomingAssignment[];
   recentAttempts: StudentRecentAttempt[];
@@ -120,6 +123,8 @@ export const getStudentOverview = async (studentId: string): Promise<StudentOver
     upcomingQuizzes,
     recentAttempts,
     assignmentsRaw,
+    personalDeadlines,
+    recoveryPlan,
   ] = await Promise.all([
     studentSubjectAttendance(studentId),
     divisionId
@@ -151,6 +156,14 @@ export const getStudentOverview = async (studentId: string): Promise<StudentOver
           .limit(8)
           .lean()
       : Promise.resolve([] as any[]),
+    PersonalDeadline.find({
+      student: new Types.ObjectId(studentId),
+      deadline: { $gte: new Date() },
+    })
+      .sort({ deadline: 1 })
+      .limit(5)
+      .lean(),
+    getStudentRecoveryPlan(studentId).catch(() => []),
   ]);
 
   /* Build subject map for attendance row enrichment. */
@@ -209,6 +222,20 @@ export const getStudentOverview = async (studentId: string): Promise<StudentOver
     status: submissionByResource.get(r._id.toString()) ?? 'pending',
   }));
 
+  // Merge personal deadlines extracted from notices
+  const noticeAssignments: StudentUpcomingAssignment[] = (personalDeadlines || []).map((p: any) => ({
+    resourceId: p._id.toString(),
+    title: p.title,
+    subjectLabel: p.subject,
+    dueDate: p.deadline ? new Date(p.deadline).toISOString() : undefined,
+    status: 'pending',
+    source: p.source || 'from notice',
+  }));
+
+  const allUpcoming = [...upcomingAssignments, ...noticeAssignments].sort(
+    (a, b) => (a.dueDate || '').localeCompare(b.dueDate || '')
+  );
+
   /* Recent quiz attempts → grade preview. Quiz doesn't store a `totalMarks`
    * field — derive it from the question points so the score reads "8 / 10"
    * rather than just a bare number. */
@@ -253,8 +280,9 @@ export const getStudentOverview = async (studentId: string): Promise<StudentOver
       pendingCount,
     },
     attendance,
+    recoveryPlan: recoveryPlan || [],
     todayLectures,
-    upcomingAssignments,
+    upcomingAssignments: allUpcoming,
     recentAttempts: recent,
   };
 };

@@ -28,7 +28,7 @@ from app.core.config import get_settings
 from app.core.logging import get_logger
 from app.core.security import AuthPrincipal
 from app.integrations.erp_client import UploadFile
-from app.schemas.chat import ChatResponse, PermissionResponse
+from app.schemas.chat import ChatResponse, PermissionResponse, ToolStep
 from app.tools.erp import erp_tools
 
 log = get_logger("agent.erp")
@@ -344,18 +344,16 @@ and surface anything the user still needs to do.
 
 
 _FALLBACK_MODELS: tuple[str, ...] = (
-    "gemini-3-flash-preview",
-    "gemini-2.5-flash-lite",
-    "gemini-3.1-flash-lite-preview",
+    "gemini-3.6-flash",
     "gemini-2.5-flash",
 )
 
 
 @lru_cache(maxsize=1)
 def _shared_checkpointer():
-    from langgraph.checkpoint.memory import MemorySaver
+    from app.core.checkpointer import get_checkpointer
 
-    return MemorySaver()
+    return get_checkpointer()
 
 
 @lru_cache(maxsize=8)
@@ -411,6 +409,11 @@ def _friendly_error(e: Exception) -> str:
         return (
             "The Gemini API rate limit / free-tier quota was hit. "
             "Please wait a minute and try again."
+        )
+    if any(k in text.lower() for k in ("404", "not found", "is deprecated", "not supported", "model not found")):
+        return (
+            "The configured Gemini model is currently unavailable or deprecated. "
+            "Please check GEMINI_MODELS in your environment."
         )
     return f"Sorry — I hit an error carrying that out: {e}"
 
@@ -479,6 +482,51 @@ async def run_agent(
         )
 
     files = files or []
+
+    # Deterministic PermissionCard approval/denial execution:
+    # When the user clicks Allow/Deny on a gated write tool (e.g. create_quiz,
+    # mark_attendance), execute (or reject) the exact tool + args captured in
+    # permission_response.context without an extra LLM round-trip.
+    if permission_response and isinstance(permission_response.context, dict):
+        pending_tool = permission_response.context.get("tool")
+        pending_args = permission_response.context.get("args")
+        if isinstance(pending_tool, str) and isinstance(pending_args, dict):
+            tool_map = {t.name: t for t in erp_tools()}
+            target_tool = tool_map.get(pending_tool)
+            if target_tool is not None:
+                if permission_response.value == "deny":
+                    return ChatResponse(
+                        reply=f"Action `{pending_tool}` was denied. Nothing was saved.",
+                        session_id=session_id,
+                    )
+                if permission_response.value in ("allow", "allow_for_all"):
+                    direct_ctx = RunContext(
+                        principal=principal,
+                        token=token,
+                        files=list(files),
+                        permission_response=permission_response,
+                    )
+                    with use_run_context(direct_ctx):
+                        tool_result = await target_tool.ainvoke(pending_args)
+                    if isinstance(tool_result, dict) and tool_result.get("status") == "error":
+                        reply_text = f"Approved `{pending_tool}`, but the backend returned an error: {tool_result.get('message', 'Unknown error')}"
+                    else:
+                        msg_summary = (
+                            tool_result.get("message")
+                            if isinstance(tool_result, dict) and tool_result.get("message")
+                            else f"Approved and executed `{pending_tool}` successfully."
+                        )
+                        reply_text = str(msg_summary)
+                    return ChatResponse(
+                        reply=reply_text,
+                        session_id=session_id,
+                        tools_used=[pending_tool],
+                        steps=[ToolStep(tool=pending_tool, args=pending_args)],
+                        tables=direct_ctx.tables,
+                        attachments=direct_ctx.attachments,
+                        navigate=direct_ctx.navigate,
+                    )
+
     # If files were attached, tell the model so it knows to upload them.
     user_text = message
     if files:
@@ -497,21 +545,32 @@ async def run_agent(
     ctx_holder: list[RunContext] = []
 
     def _ctx() -> RunContext:
-        c = RunContext(principal=principal, token=token, files=list(files))
+        c = RunContext(
+            principal=principal,
+            token=token,
+            files=list(files),
+            permission_response=permission_response,
+        )
         ctx_holder.append(c)
         return c
 
     def _is_transient_model_error(err: Exception) -> bool:
-        t = str(err)
+        t = str(err).lower()
         return any(
             k in t
             for k in (
                 "429",
-                "RESOURCE_EXHAUSTED",
+                "resource_exhausted",
                 "503",
                 "504",
-                "UNAVAILABLE",
-                "DEADLINE_EXCEEDED",
+                "unavailable",
+                "deadline_exceeded",
+                "404",
+                "not_found",
+                "not found",
+                "is not supported",
+                "is deprecated",
+                "model not found",
             )
         )
 
@@ -535,10 +594,11 @@ async def run_agent(
                 log.exception("agent retry failed", session=session_id)
                 return ChatResponse(reply=_friendly_error(e2), session_id=session_id)
         elif _is_transient_model_error(e):
+            configured_models = get_settings().gemini_model_list
             primary_model = get_settings().gemini_model
             msgs = []
             last_err: Exception = e
-            for fb_model in _FALLBACK_MODELS:
+            for fb_model in configured_models:
                 if fb_model == primary_model:
                     continue
                 fb_graph = _build_graph(fb_model)
@@ -546,9 +606,10 @@ async def run_agent(
                     continue
                 fb_thread = f"{session_id}:{fb_model}:{uuid4().hex[:6]}"
                 log.warning(
-                    "primary model quota/availability hit; trying fallback model",
+                    "primary model error/not found/quota hit; trying fallback model",
                     primary=primary_model,
                     fallback=fb_model,
+                    error=str(e),
                 )
                 try:
                     msgs = await _invoke_turn(

@@ -37,16 +37,36 @@ export const AttendanceOverview: React.FC = () => {
 
   // Pick the first division automatically once they load.
   useEffect(() => {
-    if (!divisionId && divisions.length > 0) selectDivision(divisions[0]!._id);
+    if (!divisionId && divisions.length > 0 && divisions[0]?._id) {
+      selectDivision(divisions[0]._id);
+    }
   }, [divisions, divisionId, selectDivision]);
 
   // Refresh stats whenever the division changes.
   useEffect(() => {
-    if (!divisionId) { setStats([]); setSubjectAvgs([]); return; }
+    if (!divisionId || divisionId === 'undefined') {
+      setStats([]);
+      setSubjectAvgs([]);
+      setError(null);
+      return;
+    }
     let cancelled = false;
+    setError(null);
     Promise.all([fetchDivisionStats(divisionId), fetchDivisionSubjectAverages(divisionId)])
-      .then(([s, a]) => { if (!cancelled) { setStats(s); setSubjectAvgs(a); } })
-      .catch(e => { if (!cancelled) setError(e instanceof ApiError ? e.message : 'Failed to load stats'); });
+      .then(([s, a]) => {
+        if (!cancelled) {
+          setStats(s || []);
+          setSubjectAvgs(a || []);
+          setError(null);
+        }
+      })
+      .catch(e => {
+        if (!cancelled) {
+          const msg = e instanceof ApiError ? e.message : (e instanceof Error ? e.message : 'Failed to load stats');
+          console.warn('Attendance stats load notice:', msg);
+          setError(msg);
+        }
+      });
     return () => { cancelled = true; };
   }, [divisionId]);
 
@@ -78,9 +98,17 @@ export const AttendanceOverview: React.FC = () => {
     ];
   }, [stats, lectures]);
 
-  const goMark = (lectureId: string) => {
-    selectLecture(lectureId);
-    navigate('/attendance/mark');
+  const goMark = (lectureId?: string) => {
+    const targetId =
+      lectureId ||
+      lectures.find(l => l.status !== 'completed' && l.status !== 'cancelled')?._id ||
+      lectures[0]?._id;
+    if (targetId) {
+      selectLecture(targetId);
+      navigate(`/attendance/mark?lectureId=${targetId}`);
+    } else {
+      navigate('/attendance/mark');
+    }
   };
 
   const onCancel = async (lectureId: string) => {
@@ -135,15 +163,35 @@ export const AttendanceOverview: React.FC = () => {
           </button>
           <button
             className="btn btn-primary"
-            onClick={() => { if (lectures[0]) goMark(lectures[0]._id); }}
-            disabled={lectures.length === 0}
+            onClick={() => goMark()}
           >
             <Plus size={16} /> Mark Attendance
           </button>
         </>
       }
     >
-      {error && <div className="status-pill danger" style={{ marginBottom: '1rem' }}>{error}</div>}
+      {error && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 1rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '0.5rem', marginBottom: '1rem', color: '#991B1B', fontSize: '0.825rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <AlertCircle size={16} color="#DC2626" />
+            <span>{error}</span>
+          </div>
+          <button
+            className="btn btn-secondary btn-sm"
+            style={{ padding: '0.2rem 0.6rem', fontSize: '0.75rem', borderColor: '#FCA5A5' }}
+            onClick={() => {
+              if (divisionId) {
+                setError(null);
+                Promise.all([fetchDivisionStats(divisionId), fetchDivisionSubjectAverages(divisionId)])
+                  .then(([s, a]) => { setStats(s || []); setSubjectAvgs(a || []); setError(null); })
+                  .catch(e => setError(e instanceof ApiError ? e.message : 'Failed to load stats'));
+              }
+            }}
+          >
+            <RefreshCw size={12} /> Retry
+          </button>
+        </div>
+      )}
 
       <div className="stack-lg">
         {/* Metrics */}

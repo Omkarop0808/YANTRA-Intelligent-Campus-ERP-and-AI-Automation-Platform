@@ -38,6 +38,9 @@ const schema = new Schema<AttendanceDoc>(
 // One attendance record per (lecture, student).
 schema.index({ lecture: 1, student: 1 }, { unique: true });
 schema.index({ student: 1, subject: 1 });
+schema.index({ division: 1, subject: 1, markedAt: -1 });
+schema.index({ division: 1, status: 1 });
+schema.index({ student: 1, division: 1, subject: 1 });
 schema.index({ division: 1, subject: 1 });
 
 export const Attendance: Model<AttendanceDoc> = model<AttendanceDoc>('Attendance', schema);

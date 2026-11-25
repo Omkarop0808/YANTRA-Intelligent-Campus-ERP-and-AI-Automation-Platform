@@ -17,6 +17,9 @@ import gradeBatchRoutes from './grade-batch.routes';
 import teacherOverviewRoutes from './teacher-overview.routes';
 import studentOverviewRoutes from './student-overview.routes';
 import quizRoutes from './quiz.routes';
+import deadlineRoutes from './deadline.routes';
+import reportRoutes from './report.routes';
+import parentRoutes from './parent.routes';
 
 const router = Router();
 
@@ -46,5 +49,8 @@ router.use('/', classNotificationRoutes);
 router.use('/', gradeBatchRoutes);
 router.use('/', teacherOverviewRoutes);
 router.use('/', studentOverviewRoutes);
+router.use('/', deadlineRoutes);
+router.use('/', reportRoutes);
+router.use('/parent', parentRoutes);
 
 export default router;

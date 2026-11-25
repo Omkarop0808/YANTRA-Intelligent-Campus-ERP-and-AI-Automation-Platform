@@ -1,0 +1,44 @@
+[
+  {
+    "title": "OpenAI | Research & Deployment",
+    "url": "https://openai.com/",
+    "source": "duckduckgo",
+    "description": "We believe our research will eventually lead to artificial general intelligence, a system that can solve human-level problems.",
+    "popularity": 10,
+    "pushed_at": "2026-11-07T12:14:41.710541+00:00",
+    "archived": false,
+    "topics": [
+      "web",
+      "article"
+    ],
+    "readme_snippet": "We believe our research will eventually lead to artificial general intelligence, a system that can solve human-level problems."
+  },
+  {
+    "title": "‎Google Gemini",
+    "url": "https://gemini.google.com/",
+    "source": "duckduckgo",
+    "description": "Meet Gemini, Google’s AI assistant. Get help with writing, planning, brainstorming, and more. Experience the power of generative AI.",
+    "popularity": 10,
+    "pushed_at": "2026-11-07T12:14:41.710570+00:00",
+    "archived": false,
+    "topics": [
+      "web",
+      "article"
+    ],
+    "readme_snippet": "Meet Gemini, Google’s AI assistant. Get help with writing, planning, brainstorming, and more. Experience the power of generative AI."
+  },
+  {
+    "title": "DeepAI",
+    "url": "https://deepai.org/",
+    "source": "duckduckgo",
+    "description": "Since then, we have greatly expanded: with a single prompt, you can generate images, edit photos, chat with an AI that browses the …",
+    "popularity": 10,
+    "pushed_at": "2026-11-07T12:14:41.710575+00:00",
+    "archived": false,
+    "topics": [
+      "web",
+      "article"
+    ],
+    "readme_snippet": "Since then, we have greatly expanded: with a single prompt, you can generate images, edit photos, chat with an AI that browses the …"
+  }
+]

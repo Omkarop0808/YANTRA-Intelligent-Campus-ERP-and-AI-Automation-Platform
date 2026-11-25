@@ -17,6 +17,17 @@ interface SelectionState {
   lectureId: string | null;
 }
 
+interface CachedRoster {
+  lecture: Lecture;
+  roster: RosterEntry[];
+  initStatus: Record<string, AttendanceStatus>;
+  initRemarks: Record<string, string>;
+  cachedAt: number;
+}
+
+// In-memory cache for instant (0ms) lecture roster switching
+const rosterCache = new Map<string, CachedRoster>();
+
 interface AttendanceContextValue {
   // Selection state
   divisionId: string | null;
@@ -81,7 +92,14 @@ export const AttendanceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     let cancelled = false;
     setLoading(l => ({ ...l, divisions: true }));
     fetchMyDivisions()
-      .then(d => { if (!cancelled) setDivisions(d); })
+      .then(d => {
+        if (!cancelled) {
+          setDivisions(d);
+          if (d.length > 0) {
+            setSel(s => s.divisionId ? s : { ...s, divisionId: d[0]._id });
+          }
+        }
+      })
       .catch(e => { if (!cancelled) setError(e?.message ?? 'Failed to load divisions'); })
       .finally(() => { if (!cancelled) setLoading(l => ({ ...l, divisions: false })); });
     return () => { cancelled = true; };
@@ -106,7 +124,11 @@ export const AttendanceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   /* ---- Load lecture detail + roster ------------------------------ */
   const refreshRoster = useCallback(async () => {
     if (!sel.lectureId) { setLecture(null); setRoster([]); return; }
-    setLoading(l => ({ ...l, roster: true }));
+    const cached = rosterCache.get(sel.lectureId);
+    if (!cached) {
+      setLoading(l => ({ ...l, roster: true }));
+    }
+    setError(null);
     try {
       const [lec, ros] = await Promise.all([
         fetchLecture(sel.lectureId),
@@ -127,6 +149,20 @@ export const AttendanceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
       setLocalStatusMap(initStatus);
       setLocalRemarksMap(initRemarks);
+      rosterCache.set(sel.lectureId, {
+        lecture: lec,
+        roster: ros,
+        initStatus,
+        initRemarks,
+        cachedAt: Date.now(),
+      });
+      // Synchronize division if missing
+      if (lec?.division) {
+        const divId = typeof lec.division === 'object' ? lec.division._id : lec.division;
+        if (divId) {
+          setSel(s => s.divisionId === divId ? s : { ...s, divisionId: divId });
+        }
+      }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Failed to load roster');
     } finally {
@@ -139,9 +175,30 @@ export const AttendanceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   /* ---- Selection helpers ----------------------------------------- */
   const selectDivision = useCallback((id: string | null) => {
     setSel({ divisionId: id, lectureId: null });
+    setLecture(null);
+    setRoster([]);
   }, []);
   const selectLecture = useCallback((id: string | null) => {
-    setSel(prev => ({ ...prev, lectureId: id }));
+    setSel(prev => {
+      if (prev.lectureId === id) return prev;
+      return { ...prev, lectureId: id };
+    });
+    if (id) {
+      const cached = rosterCache.get(id);
+      if (cached) {
+        // Fast instant render from cache!
+        setLecture(cached.lecture);
+        setRoster(cached.roster);
+        setLocalStatusMap(cached.initStatus);
+        setLocalRemarksMap(cached.initRemarks);
+        setLoading(l => ({ ...l, roster: false }));
+      } else {
+        setLoading(l => ({ ...l, roster: true }));
+      }
+    } else {
+      setLecture(null);
+      setRoster([]);
+    }
   }, []);
 
   /* ---- Local mutations ------------------------------------------- */

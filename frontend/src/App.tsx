@@ -3,6 +3,7 @@ import { SignIn } from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
 import { Dashboard } from './pages/Dashboard';
 import { Admin } from './pages/Admin';
+import { AcademicSetup } from './pages/AcademicSetup';
 import { Automation } from './pages/Automation';
 import { AutomationDetail } from './pages/AutomationDetail';
 import { ChatInterface } from './pages/ChatInterface';
@@ -105,6 +106,9 @@ const App = () => {
             <Route path="/admin" element={
               <ProtectedRoute roles={['admin']} requireActive><Admin /></ProtectedRoute>
             } />
+            <Route path="/admin/academic-setup" element={
+              <ProtectedRoute roles={['admin']} requireActive><AcademicSetup /></ProtectedRoute>
+            } />
 
             {/* Conversational AI assistant — previously lived at /automation */}
             <Route path="/chat-interface" element={
@@ -144,7 +148,11 @@ const App = () => {
             <Route path="/grades"    element={<ProtectedRoute requireActive><GradesByRole /></ProtectedRoute>} />
             <Route path="/schedule"  element={<ProtectedRoute requireActive><ScheduleByRole /></ProtectedRoute>} />
             <Route path="/resources" element={<ProtectedRoute roles={['student']} requireActive><StudentResources /></ProtectedRoute>} />
-            <Route path="/finance"   element={<ProtectedRoute requireActive><FinanceByRole /></ProtectedRoute>} />
+            <Route path="/finance"   element={
+              <ProtectedRoute requireActive>
+                {import.meta.env.VITE_ENABLE_FINANCE === 'true' ? <FinanceByRole /> : <Navigate to="/dashboard" replace />}
+              </ProtectedRoute>
+            } />
 
             {/* Teacher quick actions (dashboard) */}
             <Route path="/announcements" element={

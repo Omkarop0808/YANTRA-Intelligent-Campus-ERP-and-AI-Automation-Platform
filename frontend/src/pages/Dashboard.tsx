@@ -7,6 +7,7 @@ import {
 import { AppLayout } from '../components/layout/AppLayout';
 import { TeacherDashboard } from './TeacherDashboard';
 import { StudentDashboard } from './StudentDashboard';
+import { ParentDashboard } from './ParentDashboard';
 import { useRole } from '../lib/useRole';
 import { useAuth } from '../lib/auth/AuthContext';
 import { apiRequest, ApiError } from '../lib/api';
@@ -321,5 +322,6 @@ export const Dashboard: React.FC = () => {
   const { role } = useRole();
   if (role === 'teacher') return <TeacherDashboard />;
   if (role === 'student') return <StudentDashboard />;
+  if (role === 'parent') return <ParentDashboard />;
   return <AdminDashboard />;
 };

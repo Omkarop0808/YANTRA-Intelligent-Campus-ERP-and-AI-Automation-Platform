@@ -1,0 +1,14 @@
+{
+  "name": "yantra-demo-video",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare-env": "bash ./prepare.sh",
+    "record:all": "node ./record.mjs --all",
+    "record:list": "node ./record.mjs --list"
+  },
+  "dependencies": {
+    "playwright": "^1.52.0"
+  }
+}

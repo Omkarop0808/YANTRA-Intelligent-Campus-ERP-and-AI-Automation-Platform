@@ -6,22 +6,32 @@ Run with:
 
 from __future__ import annotations
 
+import asyncio
+import time
+import uuid
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+import structlog
 
 from app.api import agents as agents_api
 from app.api import grading as grading_api
 from app.api import health as health_api
+from app.api import ingest as ingest_api
+from app.api import rag as rag_api
 from app.api import tools as tools_api
 from app.api import workflows as workflows_api
 from app.core.config import get_settings
 from app.core.errors import unhandled_exception_handler
 from app.core.exports import exports_root
 from app.core.logging import configure_logging, get_logger
+from app.core.model_verifier import verify_gemini_models
+from app.core.rate_limit import limiter
 from app.tools.builtin import register_builtin_tools
 
 # All HTTP routes live under this prefix — mirrors the Express backend's
@@ -35,11 +45,14 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     log = get_logger("startup")
     settings = get_settings()
     register_builtin_tools()
+    # Run Gemini models check in background so Render cold starts never block /health
+    asyncio.create_task(asyncio.to_thread(verify_gemini_models, settings))
     log.info(
         "Yantra ERP Python backend ready",
         env=settings.environment,
         port=settings.port,
         cors=settings.cors_origin_list,
+        gemini_models=settings.gemini_model_list,
     )
     yield
     log.info("shutting down")
@@ -53,6 +66,13 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+    if settings.proxy_headers:
+        from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+        app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=settings.forwarded_allow_ips)
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
@@ -61,17 +81,20 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Request logging — minimal, attaches latency.
+    # Request ID and logging middleware
     @app.middleware("http")
-    async def _log_requests(request: Request, call_next):  # type: ignore[no-untyped-def]
-        log = get_logger("http")
-        import time
-
+    async def _request_id_and_logging(request: Request, call_next):  # type: ignore[no-untyped-def]
+        req_id = request.headers.get("x-request-id") or uuid.uuid4().hex
+        structlog.contextvars.clear_contextvars()
+        structlog.contextvars.bind_contextvars(request_id=req_id)
         start = time.perf_counter()
         response = await call_next(request)
         ms = (time.perf_counter() - start) * 1000
+        response.headers["X-Request-Id"] = req_id
+        log = get_logger("http")
         log.info(
             "request",
+            request_id=req_id,
             method=request.method,
             path=request.url.path,
             status=response.status_code,
@@ -101,6 +124,8 @@ def create_app() -> FastAPI:
         )
 
     app.include_router(health_api.router, prefix=API_PREFIX)
+    app.include_router(ingest_api.router, prefix=API_PREFIX)
+    app.include_router(rag_api.router, prefix=API_PREFIX)
     app.include_router(agents_api.router, prefix=API_PREFIX)
     app.include_router(workflows_api.router, prefix=API_PREFIX)
     app.include_router(tools_api.router, prefix=API_PREFIX)

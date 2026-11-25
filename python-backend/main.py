@@ -19,6 +19,8 @@ def main() -> None:
         port=settings.port,
         reload=not settings.is_production,
         log_config=None,  # we own logging via structlog
+        proxy_headers=settings.proxy_headers,
+        forwarded_allow_ips=settings.forwarded_allow_ips,
     )
 
 

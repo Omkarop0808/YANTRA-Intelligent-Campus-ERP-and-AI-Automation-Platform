@@ -1,0 +1,67 @@
+[
+  {
+    "title": "Time-table-scheduler",
+    "full_name": "pranavkhurana/Time-table-scheduler",
+    "url": "https://github.com/pranavkhurana/Time-table-scheduler",
+    "source": "github",
+    "description": "Time Table generation using Genetic Algorithms ( Java-Struts2)",
+    "popularity": 249,
+    "pushed_at": "2017-04-29T18:21:32Z",
+    "archived": false,
+    "topics": [
+      "chromosome",
+      "eclipse",
+      "genetic-algorithm",
+      "java",
+      "scheduling",
+      "struts2",
+      "timetable",
+      "timetable-generator"
+    ],
+    "readme_snippet": "﻿<div align=\"center\"><h1><b>AUTOMATED TIME-TABLE SCHEDULER</b><br> (Using Genetic Algorithms)</h1>\n\n<img alt=\"preview\" src=\"/readme-images/preview.png\" width=\"65%\"></div>\n\n## Introduction\nTime Table Scheduling is an NP-hard problem and hence polynomial time verifiable using genetic algorithms. It a typical scheduling problem that appears to be a tedious job in every academic institute once or twice a year. In earlier days, time table scheduling was done manually with a single person or some group involved in task of scheduling it manually, which takes a lot of effort and time. Planning timetables is one of the most complex and error-prone applications.\nTimetabling is the task of creating a timetable while satisfying some constraints. There are basically two types of constraints, soft constraints and hard constraints. Soft constraints are those if we violate them in scheduling, the output is still valid, but hard constraints are those which if we violate them; the timetable is no longer valid. The search space of a timetabling problem is too vast, many solutions exist in the search space and few of them are not feasible. Feasible solutions here mean those which do not violate hard constraints and as well try to satisfy soft constraints. We need to choose the most appropriate one from feasible solutions. Most appropriate ones here mean those which do not violate soft constraints to a greater extent. In this project hard-constraints have been taken care of strictly and it has be"
+  },
+  {
+    "title": "TimetableGenerationSystem",
+    "full_name": "abhayshah0305/TimetableGenerationSystem",
+    "url": "https://github.com/abhayshah0305/TimetableGenerationSystem",
+    "source": "github",
+    "description": "A Timetable Generator built using the Django Framework. This web application uses a genetic algorithm to generate the most optimal timetable",
+    "popularity": 67,
+    "pushed_at": "2024-01-08T13:57:59Z",
+    "archived": false,
+    "topics": [
+      "django",
+      "genetic-algorithm",
+      "python3",
+      "sqlite3",
+      "timetable-generator"
+    ],
+    "readme_snippet": "# Timetable Generation System\n\n<h3>Project Description</h3>\n<p>The project, Timetable Generation System (TTGS), is a web application developed using the Django Framework and an SQLite database.</p>\n<p>The project makes use of a genetic algorithm to satisfy the soft and hard constraints and generate the most optimal timetable. The web application includes a simple authentication-authorization module, and on successfull authentication the user is redirected to the admin dashboard.</p>\n<p>On the admin dashboard the user can input the data of the college/university which is required to generate the timetable. The user must add the following details:</p>\n<ol>\n  <li>Teachers</li>\n  <li>Classrooms</li>\n  <li>Timings</li>\n  <li>Courses</li>\n  <li>Departments</li>\n  <li>Sections</li>\n</ol>\n\n<p>Upon successfull entry of the data into sqlite database, the user can navigate to the \"Generate Timetable\" page to start the process of generating the timetable. Upon successfull generation of the timetable the user can download the timetable as a PDF.</p>   \n\n<p>Technologies Used:</p>\n<ul>\n  <li>HTML5</li>\n  <li>CSS3</li>\n  <li>Python 3.8</li>\n  <li>Django 3.0.*</li>\n  <li>JavaScript</li>\n  <li>sqlite3</li>\n</ul>\n\n<h3>How to run the Project?</h3>\n<ol>\n  <li>Clone the Repository</li>\n  <li>Access the project files by using an IDE (PyCharm or Spyder) or via the command line\n  <li>Enter the directory of the main project via the command line or the terminal on the IDE</li>\n  <li>Run the command \"py"
+  },
+  {
+    "title": "Automatic-TimeTable-Generation-For-An-Institute",
+    "full_name": "ravi-kp/Automatic-TimeTable-Generation-For-An-Institute",
+    "url": "https://github.com/ravi-kp/Automatic-TimeTable-Generation-For-An-Institute",
+    "source": "github",
+    "description": "Automatic time table generation system (IIT Dharwad)",
+    "popularity": 59,
+    "pushed_at": "2019-11-29T01:30:23Z",
+    "archived": false,
+    "topics": [
+      "graph-matching",
+      "iit",
+      "indian-institute-of-technology",
+      "matching-algorithm",
+      "table",
+      "time",
+      "timetable",
+      "timetable-builder",
+      "timetable-generator",
+      "timetable-management",
+      "timetable-scheduling-application",
+      "timetables",
+      "xampp-server"
+    ],
+    "readme_snippet": "# TimeTable\nAutomatic time table generation system.\n\n1)install Xampp server from https://www.apachefriends.org/download.html\n\n2)After installation put the whole downloaded tt folder to htdocs folder of Xampp server.\n\n3)start Xampp server using this command $ sudo /opt/lampp/lampp start.\n\n4)go to browser and paste http://localhost/phpmyadmin/\n\n5)create new database named as \"timetable\".\n\n6)import timetable.sql(which was inside tt folder) into your newly created database timetable.\n\n7)now run http://localhost/tt/Admin/index.php.\n\n"
+  }
+]

@@ -13,6 +13,7 @@ import { Schedule } from '../models/Schedule';
 import { Quiz } from '../models/Quiz';
 import { Resource } from '../models/Resource';
 import { Submission } from '../models/Submission';
+import { AgentAuditLog } from '../models/AgentAuditLog';
 
 export const getAdminOverview = asyncHandler(async (_req: Request, res: Response) => {
   const [
@@ -101,4 +102,55 @@ export const rejectTeacher = asyncHandler(async (req: Request, res: Response) =>
   const updated = await setTeacherStatus(id, 'rejected');
   logger.info(`Teacher rejected`, { id: updated._id.toString(), by: req.auth?.sub });
   res.json({ teacher: updated.toJSON() });
+});
+
+export const getAgentAuditLogs = asyncHandler(async (req: Request, res: Response) => {
+  const page = Math.max(1, parseInt(String(req.query.page || '1'), 10));
+  const pageSize = Math.min(100, Math.max(1, parseInt(String(req.query.pageSize || '20'), 10)));
+  const query: Record<string, unknown> = {};
+
+  if (req.query.tool) query.tool = req.query.tool;
+  if (req.query.userId) query.userId = req.query.userId;
+  if (req.query.threadId) query.threadId = req.query.threadId;
+
+  const [logs, total] = await Promise.all([
+    AgentAuditLog.find(query)
+      .sort({ timestamp: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .populate('userId', 'name email role')
+      .lean(),
+    AgentAuditLog.countDocuments(query),
+  ]);
+
+  res.json({ logs, total, page, pageSize });
+});
+
+export const createAgentAuditLog = asyncHandler(async (req: Request, res: Response) => {
+  const { threadId, tool, args, approvalStatus, resultStatus } = req.body;
+  if (!threadId || !tool) throw BadRequest('threadId and tool required');
+
+  // Redact any password, token, or secret arguments
+  const sanitizedArgs: Record<string, unknown> = {};
+  if (args && typeof args === 'object') {
+    for (const [k, v] of Object.entries(args)) {
+      if (/password|token|secret|key/i.test(k)) {
+        sanitizedArgs[k] = '[REDACTED]';
+      } else {
+        sanitizedArgs[k] = v;
+      }
+    }
+  }
+
+  const log = await AgentAuditLog.create({
+    userId: req.auth?.sub,
+    threadId,
+    tool,
+    args: sanitizedArgs,
+    approvalStatus: approvalStatus || 'none',
+    resultStatus: resultStatus || 'success',
+    timestamp: new Date(),
+  });
+
+  res.status(201).json({ log });
 });

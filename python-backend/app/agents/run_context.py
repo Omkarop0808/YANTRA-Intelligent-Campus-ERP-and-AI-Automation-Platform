@@ -34,6 +34,8 @@ class RunContext:
     token: str
     # Files the user attached to this turn, as (field, bytes, content_type).
     files: list[UploadFile] = field(default_factory=list)
+    # Incoming user permission response from dropdown/card if any
+    permission_response: Any = None
 
     # ---- UI side-channels (populated by tools, drained by the chat endpoint).
     tables: list[ChatTable] = field(default_factory=list)

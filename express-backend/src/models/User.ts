@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Model } from 'mongoose';
 
-export type Role = 'student' | 'teacher' | 'admin';
+export type Role = 'student' | 'teacher' | 'admin' | 'parent';
 export type AccountStatus = 'pending' | 'active' | 'rejected';
 
 export interface UserDoc extends Document {
@@ -19,7 +19,7 @@ const userSchema = new Schema<UserDoc>(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
     passwordHash: { type: String, required: true, select: false },
     name: { type: String, required: true, trim: true },
-    role: { type: String, enum: ['student', 'teacher', 'admin'], required: true, index: true },
+    role: { type: String, enum: ['student', 'teacher', 'admin', 'parent'], required: true, index: true },
     status: { type: String, enum: ['pending', 'active', 'rejected'], default: 'active', index: true },
   },
   {

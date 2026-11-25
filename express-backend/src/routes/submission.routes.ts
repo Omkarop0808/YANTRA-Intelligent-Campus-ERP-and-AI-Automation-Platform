@@ -62,4 +62,11 @@ router.post(
   ctl.notifyNonSubmitters
 );
 
+// Check text similarity across peer submissions (plagiarism scan)
+router.post(
+  '/submissions/:id/check-similarity',
+  requireRole('teacher', 'admin'),
+  ctl.checkSimilarity
+);
+
 export default router;

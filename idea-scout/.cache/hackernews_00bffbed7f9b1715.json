@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Show HN: Ebiose – A Darwin‑Style Playground for Self‑Evolving AI Agents",
+    "url": "https://github.com/ebiose-ai/ebiose",
+    "source": "hackernews",
+    "description": "Hi HN!<p>After a year of R&amp;D at Inria (the French national lab), we have just open-sourced Ebiose.<p>Ebiose is a distributed, Darwin-style playground where AI architect agents design, test, and improve other agents. Instead of AI built behind closed doors, anyone can spin up a forge, state a problem, and watch candidate agents compete until the fittest survive.<p>An example instruction given to an Ebiose forge:\n&quot;Build a LangGraph agent that processes SaaS customer refunds directly through our ERP, escalating to a human for edge cases. Use the following tools: ERP API, email&#x2F;Twilio integration, refund policy documentation, and historical support tickets.&quot;<p>TL;DR<p>- Meta-architect agents: Generate new agents, reusable components, or even models in the future.<p>- Evolutionary loop: Only the best agents survive and recombine.<p>- Self-improvement: Architect agents evolve themselves over time.<p>- An evolving library: Reusable components, i.e. agent’s genes, compete for survival based on power, efficiency, and success.<p>- P2P compute (planned): Goal of utilizing unused device computing power.<p>Important note: Ebiose is still in a very early stage. Architect agents are basic for now, and there are no reusable components yet. But the core loop is working, and we’re now inviting more contributors to help build it up.<p>What&#x27;s in this first Ebiose release?<p>- Hand-crafted architect agent that performs prompt engineering and assembles agent graphs.<p>- Evolutionary engine.<p>- Forges: isolated labs for building agents tailored to specific tasks.<p>- Persistent ecosystems where top agents live on and tackle new forges.<p>- Free credits to run your own forges (thanks to cloud sponsors).<p>- Graph-based agents made of LLM nodes.<p>- Initial LangGraph runtime (others are very welcome).<p>Roadmap (help wanted!):<p>- Agent nodes: power agents with new types of nodes such as code execution, classic ML models, tool use, fine-tuning, etc.<p>- Foundational forges: code generation, prompt tuning, context grounding, agent-as-a-judge, etc.<p>- Meta-forges: architect-agents that invent other architect-agents (yes, agents that build agents that build agents).<p>- P2P compute layer to use idle GPUs&#x2F;CPUs (llama.cpp).<p>GitHub: <a href=\"https:&#x2F;&#x2F;github.com&#x2F;ebiose-ai&#x2F;ebiose\">https:&#x2F;&#x2F;github.com&#x2F;ebiose-ai&#x2F;ebiose</a> - MIT licensed.<p>Fork it, test it, star it, break it… We are eager to see what you build and to hear your feedback!<p>P.S. If you saw AlphaEvolve, they used LLM-guided evolution to find ultra-efficient algorithms like a 48-operation matrix-multiply. Ebiose shares the same evolutionary idea, a level up: instead of optimizing one program, it evolves entire agents, and even architect agents that design other agents.",
+    "popularity": 12,
+    "pushed_at": "2025-07-02T14:06:46Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  }
+]

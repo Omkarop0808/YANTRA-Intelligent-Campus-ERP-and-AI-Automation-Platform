@@ -1,0 +1,60 @@
+[
+  {
+    "title": "Dropout-Students-Prediction",
+    "full_name": "Wittline/Dropout-Students-Prediction",
+    "url": "https://github.com/Wittline/Dropout-Students-Prediction",
+    "source": "github",
+    "description": "The goal of this project is to identify students at risk of dropping out the school",
+    "popularity": 23,
+    "pushed_at": "2021-05-07T14:45:58Z",
+    "archived": false,
+    "topics": [
+      "genetic-algorithm",
+      "k-means",
+      "k-means-clustering",
+      "neural-networks",
+      "r"
+    ],
+    "readme_snippet": "#  Dropout Students Prediction\nThe goal of this project is to identify students at risk of dropping out the school\n\n<details closed>\n<summary> <a href=\"https://wittline.github.io/Dropout-Students-Prediction/report_Dropout_Student_Prediction.html\">Check the code here</a> </summary>\n</details>\n\n##  Introduction\n\n<p align=\"justify\">\nFrom a set of files which contains information about the first two semesters of 1000 students, they must be integrated into a single file for subsequent analysis, the final file must be separated into three groups:\n\n- 100 Students for Testing\n- 200 Students to Evaluate the Model\n- 700 Students to Train the Model.\n\nThe students are not labeled, so a descriptive analysis of the data is required, kmeans must be used to be able to labeled the data based on a clustering analysis, once the students are labeled. An artificial neural network must be used to train a model In order to predict which students will dropout. Once the model is built, the Test dataset of 100 students must be used to know which of them will dropout, so It will use a genetic algorithm that can optimize the resources of the university in order to offer opportunities to students and thus avoid dropping out.\n\n</p>\n<details closed>\n<summary> <a href=\"https://wittline.github.io/Dropout-Students-Prediction/report_Dropout_Student_Prediction.html\">Check the code here</a> </summary>\n</details>\n\n## Methodology\n\n![alt text](https://wittline.github.io/Dropout-Students-Prediction/Images/method.PNG"
+  },
+  {
+    "title": "Student-s-Dropout-Prediction-using-Supervised-Machine-Learning-Classifiers",
+    "full_name": "Damiieibikun/Student-s-Dropout-Prediction-using-Supervised-Machine-Learning-Classifiers",
+    "url": "https://github.com/Damiieibikun/Student-s-Dropout-Prediction-using-Supervised-Machine-Learning-Classifiers",
+    "source": "github",
+    "description": "A simple Data science project on Predicting Student's dropout using Machine Learning classification models",
+    "popularity": 21,
+    "pushed_at": "2023-11-14T22:39:27Z",
+    "archived": false,
+    "topics": [
+      "beginner",
+      "classification",
+      "data-science",
+      "data-science-portfolio",
+      "exploratory-data-analysis",
+      "machine-learning",
+      "machine-learning-algorithms",
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "plotly-express",
+      "plotly-graph-objects",
+      "python",
+      "python3",
+      "sklearn"
+    ],
+    "readme_snippet": "# Student's Dropout Prediction using Supervised Machine Learning Classifiers\nA Data science project on Predicting Students' dropout using Machine Learning classification models\n\n### Introduction ###\nThe goal of this project is to develop a predictive model using machine learning classification algorithms to identify students who are likely to drop out. By leveraging data on student demographics, academic performance, socio-economic factors, and other relevant variables, the aim is to build a robust predictive model that can effectively forecast the likelihood of students dropping out. \n\nThe data gathered are from both internal and external sources, pulling information from different institutions. This data was drawn from various databases within universities and colleges. It covers student records spanning from the academic year 2008/2009 to 2018/2019.\n\nThis model can then be used by educational institutions to allocate resources, implement early intervention strategies, and support at-risk students.\n\n### Problem ###\nIn today's educational landscape, student retention and success are of utmost importance for educational institutions. Identifying students who are at risk of dropping out and implementing timely interventions can greatly contribute to improving graduation rates and ensuring academic success. \nWhat are certain factors that may affect students' retention or dropout in academic institutions?\n\n### Methodology Approach ###\nThe methodology adopted during the course of"
+  },
+  {
+    "title": "Student-Dropout-Prediction",
+    "full_name": "ASIF-Kh/Student-Dropout-Prediction",
+    "url": "https://github.com/ASIF-Kh/Student-Dropout-Prediction",
+    "source": "github",
+    "description": "Student Dropout Prediction using ML models",
+    "popularity": 13,
+    "pushed_at": "2023-06-14T04:14:44Z",
+    "archived": false,
+    "topics": [],
+    "readme_snippet": "# Title: Predict Students' Dropout and Academic Success using ML Models \n\n## Introduction\nThe ML project aims to predict students' dropout and academic success using the dataset available at the UCI Machine Learning Repository. The dataset, titled \"Predict Students' Dropout and Academic Success,\" provides a comprehensive collection of attributes related to students' demographic information, academic performance, and various other factors that may influence their educational outcomes.\n\nBy using various machine learning algorithms and techniques, the project seeks to develop models that can accurately predict whether a student is likely to drop out or achieve academic success based on the provided data. The predictive models will utilize a range of features, including student demographics (such as age, gender, and ethnicity), socioeconomic factors, educational background, study habits,and performance in previous assessments.\n\n## Primary objectives\nThe project's primary objectives are as follows:\n1.\tData Preprocessing: Perform thorough data cleaning, handling missing values, and transforming features to ensure the dataset's quality and compatibility with machine learning algorithms.\n2.\tFeature Selection: Analyze the dataset to identify the most relevant features that strongly correlate with dropout and academic success. Select a subset of features to train the models and improve computational efficiency.\n3.\tModel Training: Employ various machine learning algorithms, such as logi"
+  }
+]

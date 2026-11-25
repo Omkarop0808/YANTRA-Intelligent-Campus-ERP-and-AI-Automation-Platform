@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Ask HN: Passionate bootcamper without a degree seeking advice",
+    "url": "https://news.ycombinator.com/item?id=41592536",
+    "source": "hackernews",
+    "description": "I have long been interested in programming, but became passionate about it a\ncouple years ago. I am determined to make it my full-time job.<p>I would like advice on the following:<p>How to:<p>become goal-oriented?<p>differentiate myself from &quot;boot-campers&#x2F;coders&quot; on job applications?<p>What should my portfolio look like? Now just some ragtag projects and one-off\nscripting solutions. I have some big ideas, but having trouble committing.<p>A little background:<p>I was working studiously toward becoming a web developer until I got spooked by\njob data and the AI hype this past March, pivoted to ML, hated it, worked\nthrough a C textbook, considered embedded&#x2F;hardware but think it&#x27;s probably\nout-of-reach&#x2F;unrealistic goal, so I&#x27;m back to Rails.<p>I have a degree from a good university, but:<p>it is a philosophy degree<p>I graduated with a 2.6 GPA, so grad school feels out-of-reach<p>I have a family, so not tons of extracurricular time. Luckily, my job is so\neasy that I only work for a few hours per week.<p>I have a senior role in a mid-sized human services nonprofit&#x27;s accounting\ndepartment<p>My boss doesn&#x27;t understand tech at all<p>desk calculator, paper and pen preferred over excel sheet<p>the most advanced thing they can do is create a pivot table. They have no\nidea how to manipulate it aside from adding fields and displaying\naggregated sums.<p>The tech situation is abysmal:<p>Use an ERP (GP 2018) that is in extended support<p>hundreds of excel workbooks spread across numerous network drives on an\nin-house server that frequently fails<p>an IT department that is beyond useless--they tend to break things\nwhenever they attempt a fix for any problem that goes beyond turning it\noff and back on again.<p>The company pays &gt;$110k a year for this<p>I have pointed out its failures but have been rebuffed by management<p>two shitty web apps. I truly think I could build one of them better\nmyself.<p>I requested a role change to db admin&#x2F;software developer, but was denied and\ngiven a senior role in current dept instead.<p>There is zero demand for tech solutions--everything just &quot;works&quot; (albeit\nwith tons of extra effort on the part of the hard-headed and huge amounts of\nwaste)<p>even if there were, I feel that implementing said solutions would be near\nimpossible given the incompetency of the aforementioned IT dept<p>Related skills:<p>Languages&#x2F;frameworks<p>Solid on Ruby (actively learning Rails), Python, C, SQL, Power Query&#x2F;BI<p>Some JS, Visual Basic, CSS, HTML<p>Intrigued by Go, Haskell, Scala<p>Concepts<p>basic:<p>DSA (BST, hash maps, linked lists, graphs, b-trees)<p>ML (eg completed, Google&#x27;s crash course, some intermediate Kaggle courses)<p>Computer architecture<p>Unix<p>solid on databases and non-cloud web technology<p>no knowledge of containerization tools, but understand they are important<p>Soft<p>Good:<p>Communication<p>Technical writing<p>Teaching&#x2F;training<p>Creative<p>Problem solving<p>Always meet deadlines<p>Poor:<p>Network<p>Learning pace (obsessive&#x2F;perfectionist tendencies, go down rabbit holes)<p>Difficult to be nice to people who clearly aren&#x27;t even trying and\nconstantly ask for help, or are just plain incompetent<p>Long-term planning&#x2F;project management<p>I see a lot of talk about boot-campers who are in it for a quick buck. Although\nmy passion was sparked by &lt;https:&#x2F;&#x2F;www.theodinproject.com&gt; (web dev), I do not\nconsider myself to fall into this category: I literally dream about programming\nmost nights. I wake up at 4 AM and can&#x27;t go back to sleep because I am too\nexcited to get back to work. I think computers are the closest thing to magic\nthat I&#x27;ll ever see.",
+    "popularity": 2,
+    "pushed_at": "2024-09-19T14:52:01Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  },
+  {
+    "title": "Schools are experimenting with AI with little evidence or policy to guide them",
+    "url": "https://www.npr.org/2026/09/28/nx-s1-5759718/ai-schools-experiment-research",
+    "source": "hackernews",
+    "description": "Hacker News discussion: Schools are experimenting with AI with little evidence or policy to guide them",
+    "popularity": 19,
+    "pushed_at": "2026-09-28T18:31:44Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  },
+  {
+    "title": "New York City pausing some AI tools in schools",
+    "url": "https://www.thehindu.com/news/international/why-is-new-york-city-pausing-some-ai-tools-in-schools-explained/article71431327.ece",
+    "source": "hackernews",
+    "description": "Hacker News discussion: New York City pausing some AI tools in schools",
+    "popularity": 2,
+    "pushed_at": "2026-09-06T14:10:20Z",
+    "archived": false,
+    "topics": [
+      "hackernews",
+      "discussion"
+    ],
+    "readme_snippet": ""
+  }
+]

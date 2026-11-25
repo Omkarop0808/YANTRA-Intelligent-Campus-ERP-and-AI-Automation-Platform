@@ -11,15 +11,35 @@ the model react to the failure (e.g. "please attach the file").
 
 from __future__ import annotations
 
+import asyncio
 import functools
 from collections.abc import Awaitable, Callable
 from typing import Any
 
+from app.core.config import get_settings
 from app.core.errors import AppError
 from app.core.logging import get_logger
 from app.integrations.erp_client import ErpApiError
+from app.schemas.chat import ChatPermission, ChatPermissionOption
 
 log = get_logger("tools.erp")
+
+WRITE_TOOLS = {
+    "mark_attendance",
+    "mark_attendance_for_all",
+    "create_resource",
+    "publish_resource",
+    "update_resource",
+    "notify_non_submitters",
+    "create_quiz",
+    "publish_quiz",
+    "grade_submission",
+    "request_resubmit",
+    "publish_proposed_grades",
+    "publish_one_grade",
+    "send_whatsapp_message",
+    "make_reminder_call",
+}
 
 
 def _error_message(e: Exception) -> str:
@@ -56,7 +76,53 @@ def erp_safe(
     @functools.wraps(func)
     async def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
-            return await func(*args, **kwargs)
+            from app.agents.run_context import current_run_context
+            ctx = current_run_context()
+            settings = get_settings()
+
+            # Enforce permission card approval on write/bulk tools if require_tool_approval is enabled
+            if settings.require_tool_approval and func.__name__ in WRITE_TOOLS and ctx:
+                resp = ctx.permission_response
+                if resp is None:
+                    ctx.set_permission(
+                        ChatPermission(
+                            prompt=f"Approval requested for action: {func.__name__}",
+                            options=[
+                                ChatPermissionOption(value="allow", label="Allow", description=f"Execute {func.__name__}"),
+                                ChatPermissionOption(value="deny", label="Deny", description=f"Reject {func.__name__}"),
+                            ],
+                            context={"tool": func.__name__, "args": kwargs},
+                        )
+                    )
+                    return {
+                        "status": "pending_approval",
+                        "message": f"PermissionCard displayed. Action {func.__name__} awaits approval.",
+                    }
+                elif getattr(resp, "value", None) == "deny":
+                    return {
+                        "status": "rejected",
+                        "message": f"Action {func.__name__} was rejected by user. Nothing saved.",
+                    }
+
+            result = await func(*args, **kwargs)
+
+            # Record audit row for every tool call (awaited so MongoDB reflects it immediately)
+            if ctx:
+                try:
+                    await ctx.erp().post(
+                        "/admin/agent-audit",
+                        json={
+                            "threadId": "thread-" + str(getattr(ctx.principal, "sub", "anon")),
+                            "tool": func.__name__,
+                            "args": kwargs,
+                            "approvalStatus": "approved" if (resp and getattr(resp, "value", None) == "allow") else "none",
+                            "resultStatus": "error" if isinstance(result, dict) and result.get("status") == "error" else "success",
+                        },
+                    )
+                except Exception as audit_err:
+                    log.warning("agent audit write failed", tool=func.__name__, error=str(audit_err))
+
+            return result
         except Exception as e:  # noqa: BLE001
             log.warning("tool error", tool=func.__name__, error=str(e))
             return {"status": "error", "message": _error_message(e)}

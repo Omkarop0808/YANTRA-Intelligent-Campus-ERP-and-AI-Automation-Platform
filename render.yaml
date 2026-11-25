@@ -1,0 +1,66 @@
+# Render Blueprint for Yantra ERP Backends (Express + FastAPI)
+# Deploy via Render Dashboard -> New + -> Blueprint -> connect this repository.
+# Secret values (sync: false) are entered securely in the Render UI on first deploy.
+
+services:
+  - type: web
+    name: yantra-express-api
+    runtime: docker
+    rootDir: express-backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: BCRYPT_SALT_ROUNDS
+        value: "10"
+      - key: LOG_LEVEL
+        value: info
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        value: local
+      - key: CLOUDINARY_API_KEY
+        value: local
+      - key: CLOUDINARY_API_SECRET
+        value: local
+      - key: CLOUDINARY_FOLDER
+        value: yantra_erp/resources
+
+  - type: web
+    name: yantra-python-ai
+    runtime: docker
+    rootDir: python-backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /python-app/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PROXY_HEADERS
+        value: "true"
+      - key: FORWARDED_ALLOW_IPS
+        value: "*"
+      - key: CHECKPOINTER_BACKEND
+        value: mongodb
+      - key: GEMINI_MODELS
+        value: gemini-3.6-flash,gemini-2.5-flash
+      - key: GEMINI_MODEL
+        value: gemini-3.6-flash
+      - key: NODE_API_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false

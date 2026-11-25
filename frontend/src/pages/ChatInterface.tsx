@@ -21,7 +21,9 @@ import { useSidebarState } from '../lib/useSidebarState';
  */
 export const ChatInterface: React.FC = () => {
   const engine = useAutomationEngine();
-  const [railOpen, setRailOpen] = useState(true);
+  const [railOpen, setRailOpen] = useState(
+    () => (typeof window !== 'undefined' ? window.innerWidth > 768 : true),
+  );
   const [maximized, setMaximized] = useState(false);
   const { setCollapsed } = useSidebarState();
 

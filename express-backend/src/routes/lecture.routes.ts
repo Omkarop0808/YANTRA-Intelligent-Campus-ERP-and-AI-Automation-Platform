@@ -19,6 +19,7 @@ router.post('/lectures/:id/cancel', requireRole('teacher', 'admin'), ctl.cancelL
 router.post('/lectures/:id/restore', requireRole('teacher', 'admin'), ctl.restoreLecture);
 
 router.get('/schedules', ctl.getSchedules);
+router.post('/schedules/validate-constraints', requireRole('teacher', 'admin'), ctl.validateConstraints);
 router.post('/schedules', requireRole('teacher', 'admin'), validateBody(createScheduleSchema), ctl.createSchedule);
 router.delete('/schedules/:id', requireRole('teacher', 'admin'), ctl.deleteSchedule);
 router.post('/schedules/materialise', requireRole('teacher', 'admin'), ctl.materialiseDay);

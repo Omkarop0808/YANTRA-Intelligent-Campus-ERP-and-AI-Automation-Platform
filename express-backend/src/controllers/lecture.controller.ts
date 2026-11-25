@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/async-handler';
 import * as lectures from '../services/lecture.service';
+import * as timetable from '../services/timetable.service';
 import { lectureRoster } from '../services/attendance.service';
 import { BadRequest, Unauthorized } from '../utils/http-errors';
 
@@ -60,6 +61,12 @@ export const deleteSchedule = asyncHandler(async (req, res) => {
   if (!id) throw BadRequest('Schedule id required');
   await lectures.deleteSchedule(id);
   res.status(204).end();
+});
+
+export const validateConstraints = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.auth) throw Unauthorized();
+  const result = await timetable.validateScheduleConstraints(req.body);
+  res.json(result);
 });
 
 /** Generate concrete lectures from the schedule template for a specific date. */

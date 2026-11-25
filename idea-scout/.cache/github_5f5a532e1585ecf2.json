@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Prediction",
+    "full_name": "ishwaryaabalakrishnan/Prediction",
+    "url": "https://github.com/ishwaryaabalakrishnan/Prediction",
+    "source": "github",
+    "description": "This project predicts scholarship eligibility using machine learning. It analyzes student academic performance, family income, and attendance to classify whether a student is eligible or not. A classification model is trained to estimate eligibility probability and support fair, data-driven scholarship decisions.",
+    "popularity": 26,
+    "pushed_at": "2026-01-04T18:23:01Z",
+    "archived": false,
+    "topics": [],
+    "readme_snippet": "# Prediction\nThis project predicts scholarship eligibility using machine learning. It analyzes student academic performance, family income, and attendance to classify whether a student is eligible or not. A classification model is trained to estimate eligibility probability and support fair, data-driven scholarship decisions.\nMachine Learning Type\n- Classification\n- Algorithm: Logistic Regression\n\n Input Features\n- Student Marks\n- Family Income\n- Attendance Percentage\n\nOutput\n- Eligible for Scholarship\n- Not Eligible\n\nTechnologies Used\n- Python\n- NumPy\n- Scikit-learn\n- VS Code\n\n How It Works\n1. Sample student data is defined inside the program.\n2. Data is split into training and testing sets.\n3. A Logistic Regression model is trained.\n4. The model predicts scholarship eligibility.\n5. Eligibility probability and final decision are displayed.\n"
+  },
+  {
+    "title": "Student-grade-prediction",
+    "full_name": "jayavandhiniMK/Student-grade-prediction",
+    "url": "https://github.com/jayavandhiniMK/Student-grade-prediction",
+    "source": "github",
+    "description": "Machine learning project that predicts expected semester grades using internal marks, attendance, and assignment scores.",
+    "popularity": 21,
+    "pushed_at": "2026-01-04T18:18:19Z",
+    "archived": false,
+    "topics": [],
+    "readme_snippet": "# Student Academic Grade Prediction\n## Project Overview\nThis project predicts a student’s *semester performance* using basic academic parameters.  \nA *Linear Regression* model is used to estimate semester marks based on internal marks, attendance percentage, and assignment scores.\nThe project demonstrates a complete *Basic Machine Learning workflow*, suitable for academic evaluation and beginner ML practice.\nStudent Grade Prediction Project\nProject Overview\n\nThis project predicts the semester marks and grades of students based on key performance indicators such as internal marks, attendance percentage, and assignment scores. It uses Linear Regression, a supervised machine learning technique, to model and predict student performance.\n\nThis project can help educators and students identify expected academic outcomes and take proactive measures to improve performance.\n\n## Features\nPredict semester marks based on student data.\nPredict grades based on predicted marks.\nEvaluate model performance using Mean Absolute Error (MAE) and R² Score.\nVisualize actual vs predicted marks using a scatter plot.\nPredict marks and grades for new students.\n## Dataset\nThe dataset is *self-created* and stored as a CSV file.\n### Features:\n- internal_marks – Internal assessment marks\n- attendance_percentage – Attendance percentage\n- assignment_score – Assignment / lab scores\n### Target:\n- semester_marks – Final semester marks\n> Synthetic data is used to avoid privacy concerns related to real student dat"
+  },
+  {
+    "title": "Student-Performance-Analysis-and-Prediction",
+    "full_name": "Lovely9899/Student-Performance-Analysis-and-Prediction",
+    "url": "https://github.com/Lovely9899/Student-Performance-Analysis-and-Prediction",
+    "source": "github",
+    "description": "Student Performance Analysis and Prediction is a data-driven approach to evaluating and forecasting academic outcomes based on various factors such as demographics, attendance, past academic records, socio-economic background, and behavioral patterns. By leveraging techniques such as statistical analysis, machine learning, and data visualization.",
+    "popularity": 17,
+    "pushed_at": "2025-07-14T09:10:23Z",
+    "archived": false,
+    "topics": [],
+    "readme_snippet": "# Student-Performance-Analysis-and-Prediction\nStudent Performance Analysis and Prediction is a data-driven approach to evaluating and forecasting academic outcomes based on various factors such as demographics, attendance, past academic records, socio-economic background, and behavioral patterns. By leveraging techniques such as statistical analysis, machine learning, and data visualization.\n"
+  }
+]

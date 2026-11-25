@@ -1,0 +1,95 @@
+{
+  "api_tests": [
+    {
+      "name": "Express Health Check",
+      "passed": true,
+      "details": "Status: 200"
+    },
+    {
+      "name": "Admin Login",
+      "passed": true,
+      "details": "User ID: 6aeee4b8161b78e352b0213e, Role: admin"
+    },
+    {
+      "name": "Teacher Login",
+      "passed": true,
+      "details": "User ID: 6af67b68aee4fd72ffedf34f, Role: teacher"
+    },
+    {
+      "name": "Student Login",
+      "passed": true,
+      "details": "User ID: 6af67b68aee4fd72ffedf358, Role: student"
+    },
+    {
+      "name": "Admin Overview API",
+      "passed": true,
+      "details": "HTTP 200, Counts: {'students': 17, 'activeTeachers': 3, 'pendingTeachers': 2, 'divisions': 3, 'subjects': 4, 'lectures': 113, 'schedules': 23, 'quizzes': 10, 'resources': 12, 'submissions': 125}"
+    },
+    {
+      "name": "Teacher Quizzes API",
+      "passed": true,
+      "details": "HTTP 200"
+    },
+    {
+      "name": "Teacher Announcements API",
+      "passed": true,
+      "details": "HTTP 200"
+    },
+    {
+      "name": "Student Quizzes API",
+      "passed": true,
+      "details": "HTTP 200"
+    }
+  ],
+  "ui_tests": [
+    {
+      "name": "SignIn Page Load",
+      "passed": true,
+      "details": "Title: 'Yantra | Intelligent Campus ERP & Automation'"
+    },
+    {
+      "name": "Teacher Dashboard View",
+      "passed": true,
+      "details": "Greeting: 'Good Afternoon, Miller!'"
+    },
+    {
+      "name": "Teacher Grade Batch Page (/grade-batch)",
+      "passed": true,
+      "details": "Rendered grading queue table and CTA actions"
+    },
+    {
+      "name": "AI Chat Interface (/chat-interface)",
+      "passed": true,
+      "details": "Loaded conversational prompt interface"
+    },
+    {
+      "name": "Automation Page (/automation)",
+      "passed": true,
+      "details": "Automation workflow panel loaded"
+    },
+    {
+      "name": "Admin Console View (/dashboard)",
+      "passed": true,
+      "details": "Admin dashboard rendered with metrics & pending teachers"
+    },
+    {
+      "name": "Student Dashboard View",
+      "passed": true,
+      "details": "Greeting: 'Good Afternoon, Aarav!'"
+    }
+  ],
+  "ai_tests": [
+    {
+      "name": "FastAPI AI Health",
+      "passed": true,
+      "details": "Status 200: {\"status\":\"ok\",\"uptime_seconds\":9142.66,\"environment\":\"development\"}"
+    },
+    {
+      "name": "FastAPI Agent Tool Registry",
+      "passed": true,
+      "details": "Exposed Tools Count: 1"
+    }
+  ],
+  "console_errors": [],
+  "improvements": []
+}
